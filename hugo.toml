@@ -1,5 +1,16 @@
-baseURL = 'example.com'
+baseURL = 'https://khushiramsingh680.github.io/Aks/'
 languageCode = 'en-us'
 title = 'Azure Managed Kubernetes'
 theme = 'hugo-theme-relearn'
 relativeURLs = true
+canonifyURLs = true
+
+[params]
+  # Relearn theme-specific parameters
+  colorTheme = "light"
+  layout = "wide"
+
+[[menu.main]]
+  name = "Home"
+  url = "/"
+  weight = 1
