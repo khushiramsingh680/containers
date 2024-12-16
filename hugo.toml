@@ -1,5 +1,5 @@
-baseURL = 'https://github.com/khushiramsingh680/Aks.git'
+baseURL = 'example.com'
 languageCode = 'en-us'
-title = 'Azure Managed Kubernete'
+title = 'Azure Managed Kubernetes'
 theme = 'hugo-theme-relearn'
 relativeURLs = true
