@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr" itemscope itemtype="http://schema.org/Article" data-r-output-format="html">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="generator" content="Hugo 0.139.3">
+    <meta name="generator" content="Relearn 8.0.0+9803d5122ebb3276acea823f476e9eb44f607862">
+    <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+    <meta name="description" content="Docker Restart Policies &amp; Types of Containers 1. Docker Restart Policies Restart policies define how Docker should handle container restarts when they exit or the Docker daemon restarts.
+Types of Restart Policies no (default)
+Container does not restart automatically. Example: docker run --restart=no nginxon-failure
+Restarts container only if it exits with a non-zero exit code (error). Optionally, you can limit retries (e.g., on-failure:5). Example: docker run --restart=on-failure:3 myappalways">
+    <meta name="author" content="">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:description" content="Docker Restart Policies &amp; Types of Containers 1. Docker Restart Policies Restart policies define how Docker should handle container restarts when they exit or the Docker daemon restarts.
+Types of Restart Policies no (default)
+Container does not restart automatically. Example: docker run --restart=no nginxon-failure
+Restarts container only if it exits with a non-zero exit code (error). Optionally, you can limit retries (e.g., on-failure:5). Example: docker run --restart=on-failure:3 myappalways">
+    <meta property="og:url" content="https://khushiramsingh680.github.io/containers/containers/container05/index.html">
+    <meta property="og:site_name" content="Learn containers">
+    <meta property="og:description" content="Docker Restart Policies &amp; Types of Containers 1. Docker Restart Policies Restart policies define how Docker should handle container restarts when they exit or the Docker daemon restarts.
+Types of Restart Policies no (default)
+Container does not restart automatically. Example: docker run --restart=no nginxon-failure
+Restarts container only if it exits with a non-zero exit code (error). Optionally, you can limit retries (e.g., on-failure:5). Example: docker run --restart=on-failure:3 myappalways">
+    <meta property="og:locale" content="en_us">
+    <meta property="og:type" content="article">
+    <meta property="article:section" content="Docker">
+    <meta itemprop="description" content="Docker Restart Policies &amp; Types of Containers 1. Docker Restart Policies Restart policies define how Docker should handle container restarts when they exit or the Docker daemon restarts.
+Types of Restart Policies no (default)
+Container does not restart automatically. Example: docker run --restart=no nginxon-failure
+Restarts container only if it exits with a non-zero exit code (error). Optionally, you can limit retries (e.g., on-failure:5). Example: docker run --restart=on-failure:3 myappalways">
+    <meta itemprop="wordCount" content="1046">
+    <title></title>
+    <link href="../../containers/css/auto-complete/auto-complete.min.css?1757150659" rel="stylesheet">
+    <script src="../../containers/js/auto-complete/auto-complete.min.js?1757150659" defer></script>
+    <script src="../../containers/js/search-lunr.min.js?1757150659" defer></script>
+    <script src="../../containers/js/search.min.js?1757150659" defer></script>
+    <script>
+      window.relearn = window.relearn || {};
+      window.relearn.index_js_url="../../searchindex.en.js?1757150659";
+    </script>
+    <script src="../../containers/js/lunr/lunr.min.js?1757150659" defer></script>
+    <script src="../../containers/js/lunr/lunr.stemmer.support.min.js?1757150659" defer></script>
+    <script src="../../containers/js/lunr/lunr.multi.min.js?1757150659" defer></script>
+    <script src="../../containers/js/lunr/lunr.en.min.js?1757150659" defer></script>
+    <script>
+      window.relearn = window.relearn || {};
+      window.relearn.contentLangs=['en'];
+    </script>
+    <link href="../../containers/fonts/fontawesome/css/fontawesome-all.min.css?1757150659" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../containers/fonts/fontawesome/css/fontawesome-all.min.css?1757150659" rel="stylesheet"></noscript>
+    <link href="../../containers/css/perfect-scrollbar/perfect-scrollbar.min.css?1757150659" rel="stylesheet">
+    <link href="../../css/theme.min.css?1757150659" rel="stylesheet">
+    <link href="../../css/format-html.min.css?1757150659" rel="stylesheet" id="R-format-style">
+    <script>
+      window.relearn = window.relearn || {};
+      // configuration
+      window.relearn.min = `.min`;
+      window.relearn.path='\/containers\/container05\/index.html';
+      window.relearn.relBasePath='..\/..';
+      window.relearn.relBaseUri='..\/..';
+      window.relearn.absBaseUri='https:\/\/khushiramsingh680.github.io\/containers';
+      window.relearn.disableAnchorCopy=false;
+      window.relearn.disableAnchorScrolling=false;
+      window.relearn.disableInlineCopyToClipboard=false;
+      window.relearn.enableBlockCodeWrap=true;
+      // legal
+      window.relearn.getItem = (s,n) => {return s.getItem(n)};
+      window.relearn.setItem = (s,n,v) => {return s.setItem(n,v)};
+      window.relearn.removeItem = (s,n) => {return s.removeItem(n)};
+      // translations
+      window.T_Copy_to_clipboard = `Copy to clipboard`;
+      window.T_Copied_to_clipboard = `Copied to clipboard!`;
+      window.T_Copy_link_to_clipboard = `Copy link to clipboard`;
+      window.T_Link_copied_to_clipboard = `Copied link to clipboard!`;
+      window.T_Reset_view = `Reset view`;
+      window.T_View_reset = `View reset!`;
+      window.T_No_results_found = `No results found for "{0}"`;
+      window.T_N_results_found = `{1} results found for "{0}"`;
+      // variant stuff
+      window.relearn.themevariants = [ 'auto' ];
+      window.relearn.customvariantname = "my-custom-variant";
+      window.relearn.changeVariant = function(variant) {
+        var oldVariant = document.documentElement.dataset.rThemeVariant;
+        window.relearn.setItem(window.localStorage, window.relearn.absBaseUri + "/variant", variant);
+        document.documentElement.dataset.rThemeVariant = variant;
+        if (oldVariant != variant) {
+          document.dispatchEvent( new CustomEvent('themeVariantLoaded', { detail: { variant, oldVariant } }) );
+          window.relearn.markVariant();
+        }
+      }
+      window.relearn.markVariant = function() {
+        var variant = window.relearn.getItem(window.localStorage, window.relearn.absBaseUri + "/variant");
+        document.querySelectorAll(".R-variantswitcher select").forEach((select) => {select.value = variant;});
+      }
+      window.relearn.initVariant = function() {
+        var variant = window.relearn.getItem(window.localStorage, window.relearn.absBaseUri + "/variant") ?? "";
+        if( variant == window.relearn.customvariantname ){
+        }else if( !variant || !window.relearn.themevariants.includes(variant) ){
+          variant = window.relearn.themevariants[0];
+          window.relearn.setItem(window.localStorage, window.relearn.absBaseUri + "/variant", variant);
+        }
+        document.documentElement.dataset.rThemeVariant = variant;
+      }
+      window.relearn.initVariant();
+      window.relearn.markVariant();
+    </script>
+  </head>
+  <body class="mobile-support html" data-url="../../containers/container05/index.html">
+    <div id="R-body" class="default-animation">
+      <div id="R-body-overlay"></div>
+      <nav id="R-topbar">
+        <div class="topbar-wrapper">
+          <div class="topbar-sidebar-divider"></div>
+          <div class="topbar-area topbar-area-start" data-area="start">
+            <div class="topbar-button topbar-button-sidebar" data-content-empty="disable" data-width-s="show" data-width-m="hide" data-width-l="hide"><button class="topbar-control" onclick="toggleNav()" type="button" title="Menu (CTRL&#43;ALT&#43;n)"><i class="fa-fw fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+<nav class="TableOfContents">
+  <ul>
+    <li><a href="#1-docker-restart-policies">1. Docker Restart Policies</a>
+      <ul>
+        <li><a href="#types-of-restart-policies">Types of Restart Policies</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-types-of-containers">2. Types of Containers</a>
+      <ul>
+        <li><a href="#21-system--service-containers">2.1 System / Service Containers</a></li>
+        <li><a href="#22-application-containers">2.2 Application Containers</a></li>
+        <li><a href="#23-ephemeral--debug-containers">2.3 Ephemeral / Debug Containers</a></li>
+        <li><a href="#13-bind-mounts">1.3 Bind Mounts</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#1-why-use-volumes">1. Why Use Volumes?</a></li>
+    <li><a href="#2-types-of-docker-storage">2. Types of Docker Storage</a></li>
+    <li><a href="#3-common-docker-volume-commands">3. Common Docker Volume Commands</a></li>
+    <li><a href="#4-using-volumes-with-containers">4. Using Volumes with Containers</a></li>
+    <li><a href="#5-backup--restore-volumes">5. Backup &amp; Restore Volumes</a></li>
+    <li><a href="#6-volume-drivers">6. Volume Drivers</a></li>
+    <li><a href="#7-best-practices">7. Best Practices</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#1-default-networks">1. Default Networks</a></li>
+    <li><a href="#2-types-of-docker-networks">2. Types of Docker Networks</a></li>
+    <li><a href="#3-common-networking-commands">3. Common Networking Commands</a></li>
+    <li><a href="#4-port-mapping">4. Port Mapping</a></li>
+    <li><a href="#5-dns--service-discovery">5. DNS &amp; Service Discovery</a></li>
+    <li><a href="#6-best-practices">6. Best Practices</a></li>
+  </ul>
+</nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement" class=""><a itemprop="item" href="../../index.html"><span itemprop="name">Containers</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement" class=""><a itemprop="item" href="../../containers/index.html"><span itemprop="name">Docker</span></a><meta itemprop="position" content="2">&nbsp;>&nbsp;</li>
+          </ol>
+          <div class="topbar-area topbar-area-end" data-area="end">
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../containers/container04/index.html" title="Part 04 (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><span class="topbar-control"><i class="fa-fw fas fa-chevron-right"></i></span>
+            </div>
+            <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+                  <div class="topbar-area topbar-area-more" data-area="more">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="R-main-overlay"></div>
+      <main id="R-body-inner" class="highlightable containers" tabindex="-1">
+        <div class="flex-block-wrapper">
+<article class="default">
+  <header class="headline">
+  </header>
+
+<h1 id=""></h1>
+
+<h1 id="docker-restart-policies--types-of-containers">Docker Restart Policies &amp; Types of Containers</h1>
+<hr>
+<h2 id="1-docker-restart-policies">1. Docker Restart Policies</h2>
+<p>Restart policies define how Docker should handle container restarts when they exit or the Docker daemon restarts.</p>
+<h3 id="types-of-restart-policies">Types of Restart Policies</h3>
+<ol>
+<li>
+<p><strong>no</strong> (default)</p>
+<ul>
+<li>Container does <strong>not</strong> restart automatically.</li>
+<li>Example:
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker run --restart<span style="color:#f92672">=</span>no nginx</span></span></code></pre></div>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>on-failure</strong></p>
+<ul>
+<li>Restarts container <strong>only if it exits with a non-zero exit code</strong> (error).</li>
+<li>Optionally, you can limit retries (e.g., <code>on-failure:5</code>).</li>
+<li>Example:
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker run --restart<span style="color:#f92672">=</span>on-failure:3 myapp</span></span></code></pre></div>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>always</strong></p>
+<ul>
+<li>Always restarts the container, regardless of exit status.</li>
+<li>If stopped manually, it will restart after Docker daemon restarts.</li>
+<li>Example:
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker run --restart<span style="color:#f92672">=</span>always redis</span></span></code></pre></div>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>unless-stopped</strong></p>
+<ul>
+<li>Similar to <code>always</code>, but if you manually stop the container, it will not restart after daemon reboot.</li>
+<li>Example:
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker run --restart<span style="color:#f92672">=</span>unless-stopped postgres</span></span></code></pre></div>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="2-types-of-containers">2. Types of Containers</h2>
+<p>Docker containers can be categorized based on their purpose and usage:</p>
+<h3 id="21-system--service-containers">2.1 System / Service Containers</h3>
+<ul>
+<li>Long-running services (like databases, web servers, monitoring tools).</li>
+<li>Typically use restart policies (<code>always</code>, <code>unless-stopped</code>).</li>
+<li>Examples: <code>mysql</code>, <code>nginx</code>, <code>prometheus</code>.</li>
+</ul>
+<h3 id="22-application-containers">2.2 Application Containers</h3>
+<ul>
+<li>Encapsulate application code and dependencies.</li>
+<li>Often run a single app or microservice.</li>
+<li>Examples: <code>mycompany/api:latest</code>, <code>node:20-app</code>.</li>
+</ul>
+<h3 id="23-ephemeral--debug-containers">2.3 Ephemeral / Debug Containers</h3>
+<ul>
+<li>Short-lived containers for testing, debugging, or one-off tasks.</li>
+<li>Do not usually need restart policies.</li>
+<li>Examples:
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker run --rm -it ubuntu bash</span></span></code></pre></div>
+</li>
+</ul>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0"><code># Docker Storage
+
+Docker storage allows containers to store and share data beyond their ephemeral writable layer.  
+By default, container data is lost when the container is removed.  
+To persist or share data, Docker provides different storage mechanisms.
+
+---
+
+## 1. Types of Docker Storage
+
+### 1.1 Container Writable Layer
+- Every container gets a **thin writable layer** on top of the image layers.
+- Temporary: deleted when the container is removed.
+- Good for short-lived, non-persistent data.
+- **Limitation**: tied to container lifecycle.
+
+### 1.2 Volumes (Recommended)
+- Managed by Docker (`/var/lib/docker/volumes/` on host).
+- Independent of container lifecycle.
+- Can be shared between multiple containers.
+- Can be backed by plugins (e.g., NFS, cloud storage).
+- Example:
+  ```bash
+  docker volume create mydata
+  docker run -d -v mydata:/app/data nginx</code></pre></div>
+<h3 id="13-bind-mounts">1.3 Bind Mounts</h3>
+<ul>
+<li>Maps a directory or file from the host filesystem into the container.</li>
+<li>Flexible: can use any path on host.</li>
+<li>Good for local development and sharing configs/logs.</li>
+<li>Example:</li>
+</ul>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>docker run -d -v /host/path:/container/path nginx</span></span></code></pre></div>
+<h1 id="docker-volumes">Docker Volumes</h1>
+<p>Docker volumes provide a way to persist data outside of containers’ writable layers.<br>
+They are managed by Docker and are the preferred mechanism for data persistence.</p>
+<hr>
+<h2 id="1-why-use-volumes">1. Why Use Volumes?</h2>
+<ul>
+<li>Data persistence beyond container lifecycle</li>
+<li>Sharing data between multiple containers</li>
+<li>Easier backup and restore</li>
+<li>Better performance compared to bind mounts</li>
+<li>Managed by Docker (stored in <code>/var/lib/docker/volumes/</code>)</li>
+</ul>
+<hr>
+<h2 id="2-types-of-docker-storage">2. Types of Docker Storage</h2>
+<ol>
+<li><strong>Volumes</strong>
+<ul>
+<li>Managed by Docker</li>
+<li>Stored in <code>/var/lib/docker/volumes/</code></li>
+<li>Best for persistence</li>
+</ul>
+</li>
+<li><strong>Bind Mounts</strong>
+<ul>
+<li>Maps host path → container path</li>
+<li>Stored anywhere on host filesystem</li>
+<li>Good for local development</li>
+</ul>
+</li>
+<li><strong>tmpfs Mounts</strong>
+<ul>
+<li>Stored only in memory</li>
+<li>Non-persistent</li>
+<li>Good for sensitive or temporary data</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="3-common-docker-volume-commands">3. Common Docker Volume Commands</h2>
+<ul>
+<li>
+<p>Create a Volume<br>
+<code>docker volume create myvolume</code></p>
+</li>
+<li>
+<p>List Volumes<br>
+<code>docker volume ls</code></p>
+</li>
+<li>
+<p>Inspect a Volume<br>
+<code>docker volume inspect myvolume</code></p>
+</li>
+<li>
+<p>Remove a Volume<br>
+<code>docker volume rm myvolume</code></p>
+</li>
+<li>
+<p>Remove All Unused Volumes<br>
+<code>docker volume prune</code></p>
+</li>
+</ul>
+<hr>
+<h2 id="4-using-volumes-with-containers">4. Using Volumes with Containers</h2>
+<ul>
+<li>
+<p>Mount a Volume<br>
+<code>docker run -d --name mycontainer -v myvolume:/data busybox</code></p>
+</li>
+<li>
+<p>Bind Mount Example<br>
+<code>docker run -d --name mybind -v /host/data:/container/data busybox</code></p>
+</li>
+<li>
+<p>tmpfs Mount Example<br>
+<code>docker run -d --name mytmp --mount type=tmpfs,destination=/app/tmp busybox</code></p>
+</li>
+</ul>
+<hr>
+<h2 id="5-backup--restore-volumes">5. Backup &amp; Restore Volumes</h2>
+<ul>
+<li>
+<p>Backup a Volume<br>
+<code>docker run --rm -v myvolume:/data -v $(pwd):/backup busybox tar cvf /backup/backup.tar /data</code></p>
+</li>
+<li>
+<p>Restore a Volume<br>
+<code>docker run --rm -v myvolume:/data -v $(pwd):/backup busybox tar xvf /backup/backup.tar -C /</code></p>
+</li>
+</ul>
+<hr>
+<h2 id="6-volume-drivers">6. Volume Drivers</h2>
+<p>Docker supports different volume drivers, e.g.:</p>
+<ul>
+<li><strong>local</strong> (default, stores data on local filesystem)</li>
+<li><strong>nfs</strong> (store data on remote NFS server)</li>
+<li><strong>azurefile</strong>, <strong>aws ebs</strong>, <strong>gcp-pd</strong> (cloud storage integrations)</li>
+</ul>
+<p>Example:<br>
+<code>docker volume create --driver local mylocalvol</code><br>
+<code>docker volume create --driver vieux/sshfs -o sshcmd=user@host:/path -o password=pass mysshvolume</code></p>
+<hr>
+<h2 id="7-best-practices">7. Best Practices</h2>
+<ul>
+<li>Use <strong>named volumes</strong> instead of anonymous volumes</li>
+<li>Prefer <strong>volumes</strong> over bind mounts for portability</li>
+<li>Use <strong>tmpfs</strong> for sensitive, ephemeral data</li>
+<li>Regularly prune unused volumes</li>
+<li>For production, consider <strong>driver-based storage</strong> (NFS, cloud)</li>
+</ul>
+<hr>
+<h1 id="docker-networking">Docker Networking</h1>
+<p>Docker networking allows containers to communicate with each other, the host system, and external networks.<br>
+It is essential for microservices and multi-container applications.</p>
+<hr>
+<h2 id="1-default-networks">1. Default Networks</h2>
+<p>When Docker is installed, it creates these default networks:</p>
+<ul>
+<li><strong>bridge</strong> (default for standalone containers)</li>
+<li><strong>host</strong> (container shares host network stack)</li>
+<li><strong>none</strong> (isolated, no networking)</li>
+</ul>
+<p>Check networks:
+<code>docker network ls</code></p>
+<p>Inspect a network:
+<code>docker network inspect bridge</code></p>
+<hr>
+<h2 id="2-types-of-docker-networks">2. Types of Docker Networks</h2>
+<ol>
+<li>
+<p><strong>Bridge Network</strong> (default)</p>
+<ul>
+<li>Containers get their own IP</li>
+<li>NAT used for external communication</li>
+<li>Best for single-host setups</li>
+<li>Example:<br>
+<code>docker run -d --name web --network bridge nginx</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Host Network</strong></p>
+<ul>
+<li>Container shares host’s network namespace</li>
+<li>No port mapping needed</li>
+<li>Higher performance, but less isolation</li>
+<li>Example:<br>
+<code>docker run -d --network host nginx</code></li>
+</ul>
+</li>
+<li>
+<p><strong>None Network</strong></p>
+<ul>
+<li>No external connectivity</li>
+<li>Only loopback interface available</li>
+<li>Useful for security and testing</li>
+<li>Example:<br>
+<code>docker run -d --network none nginx</code></li>
+</ul>
+</li>
+<li>
+<p><strong>User-defined Bridge Network</strong></p>
+<ul>
+<li>Allows custom isolated networks</li>
+<li>Containers can talk by name</li>
+<li>Example:<br>
+<code>docker network create mynetwork</code><br>
+<code>docker run -d --name db --network mynetwork mysql</code><br>
+<code>docker run -d --name app --network mynetwork nginx</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Overlay Network</strong> (Swarm/Kubernetes)</p>
+<ul>
+<li>Multi-host networking</li>
+<li>Uses VXLAN tunneling</li>
+<li>Suitable for distributed apps</li>
+<li>Example:<br>
+<code>docker network create -d overlay myoverlay</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Macvlan Network</strong></p>
+<ul>
+<li>Assigns MAC address from host’s network</li>
+<li>Container appears as a physical device</li>
+<li>Used for legacy applications</li>
+<li>Example:<br>
+<code>docker network create -d macvlan --subnet=192.168.1.0/24 --gateway=192.168.1.1 -o parent=eth0 mymacvlan</code></li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="3-common-networking-commands">3. Common Networking Commands</h2>
+<ul>
+<li>
+<p>List networks<br>
+<code>docker network ls</code></p>
+</li>
+<li>
+<p>Inspect a network<br>
+<code>docker network inspect &lt;network_name&gt;</code></p>
+</li>
+<li>
+<p>Create a network<br>
+<code>docker network create mynet</code></p>
+</li>
+<li>
+<p>Remove a network<br>
+<code>docker network rm mynet</code></p>
+</li>
+<li>
+<p>Connect a container to a network<br>
+<code>docker network connect mynet mycontainer</code></p>
+</li>
+<li>
+<p>Disconnect a container from a network<br>
+<code>docker network disconnect mynet mycontainer</code></p>
+</li>
+</ul>
+<hr>
+<h2 id="4-port-mapping">4. Port Mapping</h2>
+<p>By default, containers in bridge networks are isolated from the host.<br>
+We use <code>-p</code> or <code>--publish</code> to map host ports.</p>
+<ul>
+<li>Example:<br>
+<code>docker run -d -p 8080:80 nginx</code><br>
+(Maps host port 8080 → container port 80)</li>
+</ul>
+<hr>
+<h2 id="5-dns--service-discovery">5. DNS &amp; Service Discovery</h2>
+<ul>
+<li>Docker provides built-in DNS for container name resolution.</li>
+<li>Containers in the same user-defined network can resolve each other by name.</li>
+<li>Example:<br>
+<code>ping db</code> from <code>app</code> container in the same network.</li>
+</ul>
+<hr>
+<h2 id="6-best-practices">6. Best Practices</h2>
+<ul>
+<li>Use <strong>user-defined bridge networks</strong> for multi-container apps.</li>
+<li>For multi-host deployments, use <strong>overlay networks</strong>.</li>
+<li>Use <strong>macvlan</strong> when containers need to appear as separate physical devices.</li>
+<li>Avoid exposing unnecessary ports to the host.</li>
+<li>Use <code>docker-compose</code> or Kubernetes for complex networking.</li>
+</ul>
+<hr>
+
+  <footer class="footline">
+  </footer>
+</article>
+        </div>
+      </main>
+    </div>
+    <aside id="R-sidebar" class="default-animation">
+      <div id="R-header-topbar" class="default-animation"></div>
+      <div id="R-header-wrapper" class="default-animation">
+        <div id="R-header" class="default-animation">
+          <a id="R-logo" class="R-default" href="../../index.html">
+            <div class="logo-title">Learn containers</div>
+          </a>
+        </div>
+        <search><form action="../../search/index.html" method="get">
+          <div class="searchbox default-animation">
+            <button class="search-detail" type="submit" title="Search (CTRL+ALT+f)"><i class="fas fa-search"></i></button>
+            <label class="a11y-only" for="R-search-by">Search</label>
+            <input data-search-input id="R-search-by" name="search-by" class="search-by" type="search" placeholder="Search...">
+            <button class="search-clear" type="button" data-search-clear="" title="Clear search"><i class="fas fa-times" title="Clear search"></i></button>
+          </div>
+        </form></search>
+      </div>
+      <div id="R-homelinks" class="default-animation homelinks">
+        <div class="R-menu-divider default-animation">
+          <hr class="padding">
+        </div>
+        <div class="R-sidebarmenu R-shortcutmenu-homelinks">
+          <ul class="space collapsible-menu">
+            <li class="" data-nav-id="/index.html"><a class="padding" href="../../index.html"><i class="fa-fw fas fa-home"></i> Home</a></li>
+          </ul>
+        </div>
+        <div class="R-menu-divider default-animation">
+          <hr class="padding">
+        </div>
+        <div class="R-sidebarmenu R-shortcutmenu-headercontrols">
+          <ul class="">
+          </ul>
+        </div>
+        <div class="R-menu-divider default-animation">
+          <hr class="padding">
+        </div>
+      </div>
+      <div id="R-content-wrapper" class="highlightable">
+        <div class="R-sidebarmenu R-shortcutmenu-main">
+          <ul class="enlarge morespace collapsible-menu">
+            <li class="parent " data-nav-id="/containers/index.html"><a class="padding" href="../../containers/index.html">Docker</a><ul id="R-subsections-98e55644e7defe4a283b28e510b18cf5" class="collapsible-menu">
+            <li class="" data-nav-id="/containers/container01/index.html"><a class="padding" href="../../containers/container01/index.html">part 01</a></li>
+            <li class="" data-nav-id="/containers/conatiner02/index.html"><a class="padding" href="../../containers/conatiner02/index.html">Part 02</a></li>
+            <li class="" data-nav-id="/containers/container03/index.html"><a class="padding" href="../../containers/container03/index.html">Part 03</a></li>
+            <li class="" data-nav-id="/containers/container04/index.html"><a class="padding" href="../../containers/container04/index.html">Part 04</a></li>
+            <li class="active hidden " data-nav-id="/containers/container05/index.html"><a class="padding" href="../../containers/container05/index.html"></a></li></ul></li>
+          </ul>
+        </div>
+        <div class="R-sidebarmenu R-shortcutmenu-shortcuts">
+          <ul class="space collapsible-menu">
+          </ul>
+        </div>
+        <div id="R-footer-margin"></div>
+        <div class="R-menu-divider default-animation">
+          <hr class="padding">
+        </div>
+        <div class="R-sidebarmenu R-shortcutmenu-footercontrols">
+          <ul class="">
+          </ul>
+        </div>
+<div id="R-footer"><p>Built with <a href="https://github.com/McShelby/hugo-theme-relearn" title="love"><i class="fas fa-heart"></i></a> by <a href="https://gohugo.io/">Hugo</a></p></div>
+      </div>
+    </aside>
+    <script src="../../containers/js/clipboard/clipboard.min.js?1757150659" defer></script>
+    <script src="../../containers/js/perfect-scrollbar/perfect-scrollbar.min.js?1757150659" defer></script>
+    <script src="../../containers/js/theme.min.js?1757150659" defer></script>
+  </body>
+</html>
