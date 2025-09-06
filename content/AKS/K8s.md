@@ -1,6 +1,0 @@
-+++
-title = "Kubernetes Installation"
-
-+++
-
-TOC

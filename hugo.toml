@@ -1,6 +1,6 @@
-baseURL = 'https://khushiramsingh680.github.io/Aks/'
+baseURL = 'https://khushiramsingh680.github.io/containers/'
 languageCode = 'en-us'
-title = 'Azure Managed Kubernetes'
+title = 'Learn containers'
 theme = 'hugo-theme-relearn'
 relativeURLs = true
 canonifyURLs = true
