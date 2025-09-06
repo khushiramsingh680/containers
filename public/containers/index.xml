@@ -8,6 +8,13 @@
     <language>en-us</language>
     <atom:link href="https://khushiramsingh680.github.io/containers/containers/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Container restart policies</title>
+      <link>https://khushiramsingh680.github.io/containers/containers/container05/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://khushiramsingh680.github.io/containers/containers/container05/index.html</guid>
+      <description>Docker Restart Policies &amp; Types of Containers 1. Docker Restart Policies Restart policies define how Docker should handle container restarts when they exit or the Docker daemon restarts.&#xA;Types of Restart Policies no (default)&#xA;Container does not restart automatically. Example: docker run --restart=no nginx&#xD;on-failure&#xA;Restarts container only if it exits with a non-zero exit code (error). Optionally, you can limit retries (e.g., on-failure:5). Example: docker run --restart=on-failure:3 myapp&#xD;always</description>
+    </item>
+    <item>
       <title>part 01</title>
       <link>https://khushiramsingh680.github.io/containers/containers/container01/index.html</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -34,6 +41,13 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>https://khushiramsingh680.github.io/containers/containers/container04/index.html</guid>
       <description>1. Container Related commands Commands Lifecycle docker run [OPTIONS] IMAGE [COMMAND] [ARG...] docker run -d -p 8080:80 --name webserver nginx docker start CONTAINER_NAME_OR_ID docker stop CONTAINER_NAME_OR_ID docker restart CONTAINER_NAME_OR_ID docker rm CONTAINER_NAME_OR_ID docker rm -f CONTAINER_NAME_OR_ID docker pause CONTAINER_NAME docker unpause CONTAINER_NAME docker kill CONTAINER_NAME&#xD;Monitoring &amp; Inspection docker ps docker ps -a docker inspect CONTAINER_NAME docker logs CONTAINER_NAME docker logs -f CONTAINER_NAME docker stats docker stats CONTAINER_NAME docker exec -it CONTAINER_NAME bash docker attach CONTAINER_NAME docker top CONTAINER_NAME docker exec CONTAINER_NAME env docker inspect -f &#39;{{ .Mounts }}&#39; CONTAINER_NAME&#xD;Management docker network inspect NETWORK_NAME docker network connect NETWORK_NAME CONTAINER_NAME docker network disconnect NETWORK_NAME CONTAINER_NAME docker run --network NETWORK_NAME IMAGE_NAME&#xD;misc docker run -it IMAGE_NAME bash docker run -d IMAGE_NAME docker run -d --name limited_container --memory=&#34;512m&#34; --cpus=&#34;1.0&#34; IMAGE_NAME docker ps -q -f ancestor=IMAGE_NAME&#xD;Install mysql in docker</description>
+    </item>
+    <item>
+      <title>Contatiner Security</title>
+      <link>https://khushiramsingh680.github.io/containers/containers/container06-/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://khushiramsingh680.github.io/containers/containers/container06-/index.html</guid>
+      <description>Docker Security Docker security is about protecting containers, images, the Docker daemon, host system, and networks from vulnerabilities or misuse. It requires best practices at all layers.&#xA;1. Image Security Use official/trusted images only. Keep images small &amp; minimal (Alpine, distroless). Scan images for vulnerabilities: docker scan myimage:latest Enable Docker Content Trust (DCT) to sign &amp; verify images: export DOCKER_CONTENT_TRUST=1 2. Container Security Run as non-root user: USER 1001 (in Dockerfile) Avoid –privileged containers (full host access). Use read-only filesystem: docker run –read-only nginx Limit resources (cgroups): docker run -m 512m –cpus=“1.0” nginx Drop capabilities: docker run –cap-drop=ALL –cap-add=NET_BIND_SERVICE nginx 3. Docker Daemon Security Prefer rootless mode for Docker. Protect /var/run/docker.sock (limit access). Use TLS for Docker API: dockerd –tlsverify –tlscacert=ca.pem –tlscert=server-cert.pem –tlskey=server-key.pem -H=0.0.0.0:2376 4. Network Security Use user-defined networks for isolation. Encrypt overlay networks for multi-host. Restrict exposed ports (-p flag). Apply firewall rules (iptables, ufw). 5. Host Security Keep OS &amp; Docker updated. Enable AppArmor or SELinux. Restrict root access on host. For strong isolation → run containers inside VMs. 6. Security Tools Docker Bench for Security – Audits configs: docker run -it –net host –pid host –cap-add audit_control -v /var/lib:/var/lib -v /var/run/docker.sock:/var/run/docker.sock -v /usr/lib/systemd:/usr/lib/systemd -v /etc:/etc docker/docker-bench-security Trivy / Clair / Anchore – Image scanning. Falco – Runtime monitoring. 7. Seccomp Profiles Restrict Linux syscalls with seccomp. Example: docker run –security-opt seccomp=/path/to/profile.json nginx 8. Rootless Docker Run daemon &amp; containers without root → reduces attack surface. Install: curl -fsSL https://get.docker.com/rootless | sh 9. Best Practices (Quick Checklist ✅) Use minimal, signed images Run containers as non-root Drop privileges &amp; capabilities Use TLS for API Patch host &amp; Docker regularly Scan images before use Monitor containers at runtime</description>
     </item>
   </channel>
 </rss>

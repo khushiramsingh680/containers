@@ -1,4 +1,10 @@
-# Docker Restart Policies & Types of Containers
++++
+title = "Container restart policies"
+weight = 1
++++
+
+
+## Docker Restart Policies & Types of Containers
 
 ---
 
