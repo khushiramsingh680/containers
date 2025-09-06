@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tags on Learn containers</title>
-    <link>http://localhost:56245/containers/tags/</link>
-    <description>Recent content in Tags on Learn containers</description>
+    <title>Tags :: Learn containers</title>
+    <link>https://khushiramsingh680.github.io/containers/tags/index.html</link>
+    <description></description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <atom:link href="http://localhost:56245/containers/tags/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://khushiramsingh680.github.io/containers/tags/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>

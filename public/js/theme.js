@@ -62,6 +62,14 @@ function adjustContentWidth() {
   elc.style[dir_padding_end] = '' + end + 'px';
 }
 
+let debounceTimeout;
+function debounce(func, delay) {
+  return function (...args) {
+    clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(() => func.apply(this, args), delay);
+  };
+}
+
 function fixCodeTabs() {
   /* if only a single code block is contained in the tab and no style was selected, treat it like style=code */
   var codeTabContents = Array.from(document.querySelectorAll('.tab-content.tab-panel-style')).filter(function (tabContent) {
@@ -135,21 +143,21 @@ function switchTab(tabGroup, tabId) {
 
     // Store the selection to make it persistent
     if (window.localStorage) {
-      var selectionsJSON = window.localStorage.getItem(window.relearn.absBaseUri + '/tab-selections');
+      var selectionsJSON = window.relearn.getItem(window.localStorage, window.relearn.absBaseUri + '/tab-selections');
       if (selectionsJSON) {
         var tabSelections = JSON.parse(selectionsJSON);
       } else {
         var tabSelections = {};
       }
       tabSelections[tabGroup] = tabId;
-      window.localStorage.setItem(window.relearn.absBaseUri + '/tab-selections', JSON.stringify(tabSelections));
+      window.relearn.setItem(window.localStorage, window.relearn.absBaseUri + '/tab-selections', JSON.stringify(tabSelections));
     }
   }
 }
 
 function restoreTabSelections() {
   if (window.localStorage) {
-    var selectionsJSON = window.localStorage.getItem(window.relearn.absBaseUri + '/tab-selections');
+    var selectionsJSON = window.relearn.getItem(window.localStorage, window.relearn.absBaseUri + '/tab-selections');
     if (selectionsJSON) {
       var tabSelections = JSON.parse(selectionsJSON);
     } else {
@@ -163,8 +171,11 @@ function restoreTabSelections() {
 }
 
 function initMermaid(update, attrs) {
+  if (!window.relearn.themeUseMermaid) {
+    return;
+  }
   var doBeside = true;
-  var isImageRtl = false;
+  var isImageRtl = isRtl;
 
   // we are either in update or initialization mode;
   // during initialization, we want to edit the DOM;
@@ -314,9 +325,7 @@ function initMermaid(update, attrs) {
     theme: getColorValue('MERMAID-theme'),
   };
 
-  var search;
   if (update) {
-    search = sessionStorage.getItem(window.relearn.absBaseUri + '/search-value');
     unmark();
   }
   var is_initialized = update ? update_func(attrs) : init_func(attrs);
@@ -336,7 +345,7 @@ function initMermaid(update, attrs) {
           var svg = d3.select(this);
           svg.html('<g>' + svg.html() + '</g>');
           var inner = svg.select('*:scope > g');
-          parent.insertAdjacentHTML('beforeend', '<span class="svg-reset-button" title="' + window.T_Reset_view + '"><i class="fas fa-undo-alt"></i></span>');
+          parent.insertAdjacentHTML('beforeend', '<button class="svg-reset-button" title="' + window.T_Reset_view + '"><i class="fas fa-undo-alt"></i></button>');
           var button = parent.querySelector('.svg-reset-button');
           var zoom = d3.zoom().on('zoom', function (e) {
             inner.attr('transform', e.transform);
@@ -349,7 +358,7 @@ function initMermaid(update, attrs) {
           button.addEventListener('click', function (event) {
             svg.transition().duration(350).call(zoom.transform, d3.zoomIdentity);
             this.setAttribute('aria-label', window.T_View_reset);
-            this.classList.add('tooltipped', 'tooltipped-' + (doBeside ? 'w' : 's' + (isImageRtl ? 'e' : 'w')));
+            this.classList.add('tooltipped', 'tooltipped-' + (doBeside ? '' : 's') + (isImageRtl ? 'e' : 'w'));
           });
           button.addEventListener('mouseleave', function () {
             if (this.classList.contains('tooltipped')) {
@@ -359,18 +368,29 @@ function initMermaid(update, attrs) {
           });
           svg.call(zoom);
         });
+        // we need to mark again once the SVGs were drawn
+        // to mark terms inside an SVG;
+        // as we can not determine when all graphs are done,
+        // we debounce the call
+        debounce(mark, 200)();
       },
       querySelector: '.mermaid.mermaid-render',
       suppressErrors: true,
     });
   }
-  if (update && search && search.length) {
-    sessionStorage.setItem(window.relearn.absBaseUri + '/search-value', search);
-    mark();
+  if (update) {
+    // if the page loads Mermaid but does not contain any
+    // graphs, we will not call the above debounced mark()
+    // and have to do it at least once here to redo our unmark()
+    // call from the beginning of this function
+    debounce(mark, 200)();
   }
 }
 
 function initOpenapi(update, attrs) {
+  if (!window.relearn.themeUseOpenapi) {
+    return;
+  }
   var state = this;
   if (update && !state.is_initialized) {
     return;
@@ -400,7 +420,7 @@ function initOpenapi(update, attrs) {
   function getFirstAncestorByClass() {}
   function renderOpenAPI(oc) {
     var relBasePath = window.relearn.relBasePath;
-    var assetBuster = window.themeUseOpenapi.assetsBuster;
+    var assetBuster = window.relearn.themeUseOpenapi.assetsBuster;
     var print = isPrint || isPrintPreview ? 'PRINT-' : '';
     var format = print ? `print` : `html`;
     var min = window.relearn.min;
@@ -423,7 +443,37 @@ function initOpenapi(update, attrs) {
     const oi = document.createElement('iframe');
     oi.id = openapiIframeId;
     oi.classList.toggle('sc-openapi-iframe', true);
-    oi.srcdoc = '<!doctype html>' + '<html lang="' + lang + '" dir="' + (isRtl ? 'rtl' : 'ltr') + '" data-r-output-format="' + format + '" data-r-theme-variant="' + variant + '">' + '<head>' + '<link rel="stylesheet" href="' + window.themeUseOpenapi.css + '">' + '<link rel="stylesheet" href="' + relBasePath + `/css/swagger${min}.css` + assetBuster + '">' + '<link rel="stylesheet" href="' + relBasePath + '/css/swagger-' + swagger_theme + '.css' + assetBuster + '">' + '<link rel="stylesheet" href="' + theme + '">' + '</head>' + '<body>' + '<a class="relearn-expander" href="" onclick="return relearn_collapse_all()">Collapse all</a>' + '<a class="relearn-expander" href="" onclick="return relearn_expand_all()">Expand all</a>' + '<div id="relearn-swagger-ui"></div>' + '<script>' + 'function relearn_expand_all(){' + 'document.querySelectorAll( ".opblock-summary-control[aria-expanded=false]" ).forEach( btn => btn.click() );' + 'document.querySelectorAll( ".model-container > .model-box > button[aria-expanded=false]" ).forEach( btn => btn.click() );' + 'return false;' + '}' + 'function relearn_collapse_all(){' + 'document.querySelectorAll( ".opblock-summary-control[aria-expanded=true]" ).forEach( btn => btn.click() );' + 'document.querySelectorAll( ".model-container > .model-box > .model-box > .model > span > button[aria-expanded=true]" ).forEach( btn => btn.click() );' + 'return false;' + '}' + '</script>' + '</body>' + '</html>';
+    oi.srcdoc = `<!doctype html>
+<html lang="${lang}" dir="${isRtl ? 'rtl' : 'ltr'}" data-r-output-format="${format}" data-r-theme-variant="${variant}">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="${window.relearn.themeUseOpenapi.css}${assetBuster}">
+    <link rel="stylesheet" href="${relBasePath}/css/swagger${min}.css${assetBuster}">
+    <link rel="stylesheet" href="${relBasePath}/css/swagger-${swagger_theme}${min}.css${assetBuster}">
+    <link rel="stylesheet" href="${theme}">
+    <script>
+      function relearn_expand_all() {
+        document.querySelectorAll(".expand-operation[aria-expanded=false]").forEach(btn => btn.click());
+        document.querySelectorAll(".models-control[aria-expanded=false]").forEach(btn => btn.click());
+        document.querySelectorAll(".opblock-summary-control[aria-expanded=false]").forEach(btn => btn.click());
+        document.querySelectorAll(".model-container > .model-box > button[aria-expanded=false]").forEach(btn => btn.click());
+        return false;
+      }
+      function relearn_collapse_all() {
+        document.querySelectorAll(".expand-operation[aria-expanded=true]").forEach(btn => btn.click());
+        document.querySelectorAll(".models-control[aria-expanded=true]").forEach(btn => btn.click());
+        document.querySelectorAll(".opblock-summary-control[aria-expanded=true]").forEach(btn => btn.click());
+        document.querySelectorAll(".model-container > .model-box > .model-box > .model > span > button[aria-expanded=true]").forEach(btn => btn.click());
+        return false;
+      }
+    </script>
+  </head>
+  <body>
+    <a class="relearn-expander" href="" onclick="return relearn_collapse_all()">Collapse all</a>
+    <a class="relearn-expander" href="" onclick="return relearn_expand_all()">Expand all</a>
+    <div id="relearn-swagger-ui"></div>
+  </body>
+</html>`;
     oi.height = '100%';
     oi.width = '100%';
     oi.onload = function () {
@@ -527,10 +577,11 @@ function initAnchorClipboard() {
     return;
   }
 
-  document.querySelectorAll('h1~h2,h1~h3,h1~h4,h1~h5,h1~h6').forEach(function (element) {
-    var url = encodeURI((document.location.origin == 'null' ? document.location.protocol + '//' + document.location.host : document.location.origin) + document.location.pathname);
-    var link = url + '#' + element.id;
-    var new_element = document.createElement('span');
+  document.querySelectorAll(':has(h1) :is(h2[id], h3[id], h4[id], h5[id], h6[id])').forEach(function (element) {
+    var origin = document.location.origin == 'null' ? `${document.location.protocol}//${document.location.host}` : document.location.origin;
+    var id = encodeURIComponent(element.id);
+    var link = `${origin}${document.location.pathname}#${id}`;
+    var new_element = document.createElement('button');
     new_element.classList.add('anchor');
     if (!window.relearn.disableAnchorCopy) {
       new_element.setAttribute('title', window.T_Copy_link_to_clipboard);
@@ -614,7 +665,7 @@ function initCodeClipboard() {
       for (var i = 0; i < selection.rangeCount; i++) {
         var range = selection.getRangeAt(i);
         var fragment = range.cloneContents();
-        if (fragment.querySelector('.ln')) {
+        if (fragment.querySelector('.ln') || fragment.querySelector('[id]')) {
           return true;
         }
       }
@@ -638,7 +689,20 @@ function initCodeClipboard() {
     }
   });
 
-  var codeElements = document.querySelectorAll('code');
+  var preOnlyElements = document.querySelectorAll('pre:not(.mermaid) > :not(code), pre:not(.mermaid):not(:has(>*))');
+  for (var i = 0; i < preOnlyElements.length; i++) {
+    // move everything down one level so that it fits to the next selector
+    // and we also get copy-to-clipboard for pre-only elements
+    var pre = preOnlyElements[i];
+    var div = document.createElement('div');
+    div.classList.add('pre-only');
+    while (pre.firstChild) {
+      div.appendChild(pre.firstChild);
+    }
+    pre.appendChild(div, pre);
+  }
+
+  var codeElements = document.querySelectorAll('code, .pre-only');
   for (var i = 0; i < codeElements.length; i++) {
     var code = codeElements[i];
     var text = getCodeText(code);
@@ -646,6 +710,16 @@ function initCodeClipboard() {
     var inTable = inPre && code.parentNode.parentNode.tagName.toLowerCase() == 'td' && code.parentNode.parentNode.classList.contains('lntd');
     // avoid copy-to-clipboard for highlight shortcode in table lineno mode
     var isFirstLineCell = inTable && code.parentNode.parentNode.parentNode.querySelector('td:first-child > pre > code') == code;
+    var isBlock = inTable || inPre;
+    var inHeading = false;
+    var parent = code.parentNode;
+    while (parent && parent !== document) {
+      if (/^h[1-6]$/i.test(parent.tagName)) {
+        inHeading = true;
+        break;
+      }
+      parent = parent.parentNode;
+    }
 
     if (!isFirstLineCell && (inPre || text.length > 5)) {
       code.classList.add('copy-to-clipboard-code');
@@ -656,18 +730,39 @@ function initCodeClipboard() {
         var clone = code.cloneNode(true);
         var span = document.createElement('span');
         span.classList.add('copy-to-clipboard');
+        span.setAttribute('dir', 'auto');
         span.appendChild(clone);
         code.parentNode.replaceChild(span, code);
         code = clone;
       }
-      var button = document.createElement('span');
-      button.classList.add('copy-to-clipboard-button');
-      button.setAttribute('title', window.T_Copy_to_clipboard);
-      button.innerHTML = '<i class="far fa-copy"></i>';
-      button.addEventListener('mouseleave', function () {
-        this.removeAttribute('aria-label');
-        this.classList.remove('tooltipped', 'tooltipped-w', 'tooltipped-se', 'tooltipped-sw');
-      });
+      var button = null;
+      if (isBlock || (!window.relearn.disableInlineCopyToClipboard && !inHeading)) {
+        button = document.createElement('button');
+        var buttonPrefix = isBlock ? 'block' : 'inline';
+        button.classList.add(buttonPrefix + '-copy-to-clipboard-button');
+        button.setAttribute('title', window.T_Copy_to_clipboard);
+        button.innerHTML = '<i class="far fa-copy"></i>';
+        button.addEventListener('mouseleave', function () {
+          this.removeAttribute('aria-label');
+          this.classList.remove('tooltipped', 'tooltipped-w', 'tooltipped-se', 'tooltipped-sw');
+        });
+        if (isBlock) {
+          // we have to make sure, the button is visible while
+          // Clipboard.js is doing its magic
+          button.addEventListener('focus', function (ev) {
+            setTimeout(function () {
+              ev.target.classList.add('force-display');
+            }, 0);
+          });
+          button.addEventListener('blur', function (ev) {
+            this.removeAttribute('aria-label');
+            this.classList.remove('tooltipped', 'tooltipped-w', 'tooltipped-se', 'tooltipped-sw');
+            setTimeout(function () {
+              ev.target.classList.remove('force-display');
+            }, 0);
+          });
+        }
+      }
       if (inTable) {
         var table = code.parentNode.parentNode.parentNode.parentNode.parentNode;
         table.dataset.code = text;
@@ -676,7 +771,7 @@ function initCodeClipboard() {
         var pre = code.parentNode;
         pre.dataset.code = text;
         var p = pre.parentNode;
-        // indented code blocks are missing the div
+        // html <pre><code> constructs and indented code blocks are missing the div
         while (p != document && (p.tagName.toLowerCase() != 'div' || !p.classList.contains('highlight'))) {
           p = p.parentNode;
         }
@@ -684,19 +779,26 @@ function initCodeClipboard() {
           var clone = pre.cloneNode(true);
           var div = document.createElement('div');
           div.classList.add('highlight');
+          div.setAttribute('dir', 'auto');
+          if (window.relearn.enableBlockCodeWrap) {
+            div.classList.add('wrap-code');
+          }
           div.appendChild(clone);
           pre.parentNode.replaceChild(div, pre);
           pre = clone;
         }
         pre.parentNode.insertBefore(button, pre.nextSibling);
       } else {
+        code.classList.add('highlight');
         code.dataset.code = text;
-        code.parentNode.insertBefore(button, code.nextSibling);
+        if (button) {
+          code.parentNode.insertBefore(button, code.nextSibling);
+        }
       }
     }
   }
 
-  var clip = new ClipboardJS('.copy-to-clipboard-button', {
+  var clip = new ClipboardJS('.block-copy-to-clipboard-button, .inline-copy-to-clipboard-button', {
     text: function (trigger) {
       if (!trigger.previousElementSibling) {
         return '';
@@ -708,21 +810,21 @@ function initCodeClipboard() {
   clip.on('success', function (e) {
     e.clearSelection();
     var inPre = e.trigger.previousElementSibling && e.trigger.previousElementSibling.tagName.toLowerCase() == 'pre';
-    var isCodeRtl = !inPre ? isRtl : false;
+    var isCodeRtl = window.getComputedStyle(e.trigger).direction == 'rtl';
     var doBeside = inPre || (e.trigger.previousElementSibling && e.trigger.previousElementSibling.tagName.toLowerCase() == 'table');
     e.trigger.setAttribute('aria-label', window.T_Copied_to_clipboard);
-    e.trigger.classList.add('tooltipped', 'tooltipped-' + (doBeside ? 'w' : 's' + (isCodeRtl ? 'e' : 'w')));
+    e.trigger.classList.add('tooltipped', 'tooltipped-' + (doBeside ? '' : 's') + (isCodeRtl ? 'e' : 'w'));
   });
 
   clip.on('error', function (e) {
     var inPre = e.trigger.previousElementSibling && e.trigger.previousElementSibling.tagName.toLowerCase() == 'pre';
-    var isCodeRtl = !inPre ? isRtl : false;
+    var isCodeRtl = window.getComputedStyle(e.trigger).direction == 'rtl';
     var doBeside = inPre || (e.trigger.previousElementSibling && e.trigger.previousElementSibling.tagName.toLowerCase() == 'table');
     e.trigger.setAttribute('aria-label', fallbackMessage(e.action));
-    e.trigger.classList.add('tooltipped', 'tooltipped-' + (doBeside ? 'w' : 's' + (isCodeRtl ? 'e' : 'w')));
+    e.trigger.classList.add('tooltipped', 'tooltipped-' + (doBeside ? '' : 's') + (isCodeRtl ? 'e' : 'w'));
     var f = function () {
       e.trigger.setAttribute('aria-label', window.T_Copied_to_clipboard);
-      e.trigger.classList.add('tooltipped', 'tooltipped-' + (doBeside ? 'w' : 's' + (isCodeRtl ? 'e' : 'w')));
+      e.trigger.classList.add('tooltipped', 'tooltipped-' + (doBeside ? '' : 's') + (isCodeRtl ? 'e' : 'w'));
       document.removeEventListener('copy', f);
     };
     document.addEventListener('copy', f);
@@ -789,9 +891,7 @@ function initArrowHorizontalNav() {
 
   // button navigation
   var prev = document.querySelector('.topbar-button-prev a');
-  prev && prev.addEventListener('click', navPrev);
   var next = document.querySelector('.topbar-button-next a');
-  next && next.addEventListener('click', navNext);
 
   // keyboard navigation
   // avoid prev/next navigation if we are not at the start/end of the
@@ -1149,16 +1249,6 @@ function showPrint() {
   }
 }
 
-function navPrev() {
-  var e = document.querySelector('.topbar-button-prev a');
-  location.href = e && e.getAttribute('href');
-}
-
-function navNext() {
-  var e = document.querySelector('.topbar-button-next a');
-  location.href = e && e.getAttribute('href');
-}
-
 function initToc() {
   if (isPrint) {
     return;
@@ -1248,9 +1338,9 @@ function initExpand() {
 
 function clearHistory() {
   var visitedItem = window.relearn.absBaseUri + '/visited-url/';
-  for (var item in sessionStorage) {
+  for (var item in window.sessionStorage) {
     if (item.substring(0, visitedItem.length) === visitedItem) {
-      sessionStorage.removeItem(item);
+      window.relearn.removeItem(window.sessionStorage, item);
       var url = item.substring(visitedItem.length);
       // in case we have `relativeURLs=true` we have to strip the
       // relative path to root
@@ -1264,11 +1354,11 @@ function clearHistory() {
 
 function initHistory() {
   var visitedItem = window.relearn.absBaseUri + '/visited-url/';
-  sessionStorage.setItem(visitedItem + document.querySelector('body').dataset.url, 1);
+  window.relearn.setItem(window.sessionStorage, visitedItem + document.querySelector('body').dataset.url, 1);
 
   // loop through the sessionStorage and see if something should be marked as visited
-  for (var item in sessionStorage) {
-    if (item.substring(0, visitedItem.length) === visitedItem && sessionStorage.getItem(item) == 1) {
+  for (var item in window.sessionStorage) {
+    if (item.substring(0, visitedItem.length) === visitedItem && window.relearn.getItem(window.sessionStorage, item) == 1) {
       var url = item.substring(visitedItem.length);
       // in case we have `relativeURLs=true` we have to strip the
       // relative path to root
@@ -1297,7 +1387,8 @@ function initScrollPositionSaver() {
   elc.addEventListener('scroll', function (event) {
     if (!ticking) {
       window.requestAnimationFrame(function () {
-        savePosition();
+        // #996 GC is so damn slow that we need further throttling
+        debounce(savePosition, 200)();
         ticking = false;
       });
       ticking = true;
@@ -1335,10 +1426,10 @@ function scrollToPositions() {
     return;
   }
 
-  var search = sessionStorage.getItem(window.relearn.absBaseUri + '/search-value');
-  if (search && search.length) {
-    search = regexEscape(search);
-    var found = elementContains(search, elc);
+  var search = window.relearn.getItem(window.sessionStorage, window.relearn.absBaseUri + '/search-value');
+  var words = (search ?? '').split(' ').filter((word) => word.trim() != '');
+  if (words && words.length) {
+    var found = elementContains(words, elc);
     var searchedElem = found.length && found[0];
     if (searchedElem) {
       searchedElem.scrollIntoView();
@@ -1363,6 +1454,42 @@ function scrollToPositions() {
   }
 }
 
+function handleHistoryClearer() {
+  document.querySelectorAll('.R-historyclearer button').forEach(function (select) {
+    select.addEventListener('click', function (event) {
+      clearHistory();
+    });
+  });
+}
+
+function handleLanguageSwitcher() {
+  document.querySelectorAll('.R-languageswitcher select').forEach(function (select) {
+    select.addEventListener('change', function (event) {
+      const url = this.options[`R-select-language-${this.value}`].dataset.url;
+      this.value = this.querySelector('[data-selected]')?.value ?? select.value;
+      window.location = url;
+    });
+  });
+}
+
+function handleVariantSwitcher() {
+  document.querySelectorAll('.R-variantswitcher select').forEach(function (select) {
+    select.addEventListener('change', function (event) {
+      window.relearn.changeVariant(this.value);
+    });
+  });
+}
+
+function handleVersionSwitcher() {
+  document.querySelectorAll('.R-versionswitcher select').forEach(function (select) {
+    select.addEventListener('change', function (event) {
+      const url = (this.options[`R-select-version-${this.value}`].dataset.abs == 'true' ? '' : window.relearn.relBaseUri) + this.options[`R-select-version-${this.value}`].dataset.uri + window.relearn.path;
+      this.value = this.querySelector('[data-selected]')?.value ?? select.value;
+      window.location = url;
+    });
+  });
+}
+
 window.addEventListener('popstate', function (event) {
   scrollToPositions();
 });
@@ -1373,15 +1500,20 @@ const observer = new PerformanceObserver(function () {
 observer.observe({ type: 'navigation' });
 
 function mark() {
+  var search = window.relearn.getItem(window.sessionStorage, window.relearn.absBaseUri + '/search-value');
+  var words = (search ?? '').split(' ').filter((word) => word.trim() != '');
+  if (!words || !words.length) {
+    return;
+  }
+
   // mark some additional stuff as searchable
   var bodyInnerLinks = document.querySelectorAll('#R-body-inner a:not(.lightbox-link):not(.btn):not(.lightbox-back)');
   for (var i = 0; i < bodyInnerLinks.length; i++) {
     bodyInnerLinks[i].classList.add('highlight');
   }
 
-  var value = sessionStorage.getItem(window.relearn.absBaseUri + '/search-value');
   var highlightableElements = document.querySelectorAll('.highlightable');
-  highlight(highlightableElements, value, { element: 'mark', className: 'search' });
+  highlight(highlightableElements, words, { element: 'mark', className: 'search' });
 
   var markedElements = document.querySelectorAll('mark.search');
   for (var i = 0; i < markedElements.length; i++) {
@@ -1422,21 +1554,12 @@ function highlight(es, words, options) {
   };
   Object.assign(settings, options);
 
-  if (!words) {
+  if (!words.length) {
     return;
   }
-  if (words.constructor === String) {
-    words = [words];
-  }
-  words = words.filter(function (word, i) {
-    return word != '';
-  });
   words = words.map(function (word, i) {
     return regexEscape(word);
   });
-  if (words.length == 0) {
-    return this;
-  }
 
   var flag = settings.caseSensitive ? '' : 'i';
   var pattern = '(' + words.join('|') + ')';
@@ -1479,7 +1602,6 @@ function highlightNode(node, re, nodeName, className) {
 }
 
 function unmark() {
-  sessionStorage.removeItem(window.relearn.absBaseUri + '/search-value');
   var markedElements = document.querySelectorAll('mark.search');
   for (var i = 0; i < markedElements.length; i++) {
     var parent = markedElements[i].parentNode;
@@ -1530,30 +1652,51 @@ function unhighlight(es, options) {
 }
 
 // replace jQuery.createPseudo with https://stackoverflow.com/a/66318392
-function elementContains(txt, e) {
-  var regex = RegExp(txt, 'i');
-  var nodes = [];
-  if (e) {
-    var tree = document.createTreeWalker(
-      e,
-      4 /* NodeFilter.SHOW_TEXT */,
-      function (node) {
-        return regex.test(node.data);
-      },
-      false
-    );
-    var node = null;
-    while ((node = tree.nextNode())) {
-      nodes.push(node.parentElement);
-    }
+function elementContains(words, e) {
+  var settings = {
+    caseSensitive: false,
+    wordsOnly: false,
+  };
+
+  if (!words.length) {
+    return [];
   }
+  if (!e) {
+    return [];
+  }
+  words = words.map(function (word, i) {
+    return regexEscape(word);
+  });
+  var flag = settings.caseSensitive ? '' : 'i';
+  var nodes = [];
+
+  var pattern = '(' + words.join('|') + ')';
+  if (settings.wordsOnly) {
+    pattern = '\\b' + pattern + '\\b';
+  }
+  var regex = new RegExp(pattern, flag);
+
+  var tree = document.createTreeWalker(
+    e,
+    4, // NodeFilter.SHOW_TEXT
+    function (node) {
+      return regex.test(node.data);
+    },
+    false
+  );
+  var node = null;
+  while ((node = tree.nextNode())) {
+    nodes.push(node.parentElement);
+  }
+
   return nodes;
 }
 
 function searchInputHandler(value) {
+  window.relearn.removeItem(window.sessionStorage, window.relearn.absBaseUri + '/search-value');
   unmark();
   if (value.length) {
-    sessionStorage.setItem(window.relearn.absBaseUri + '/search-value', value);
+    window.relearn.setItem(window.sessionStorage, window.relearn.absBaseUri + '/search-value', value);
     mark();
   }
 }
@@ -1565,15 +1708,16 @@ function initSearch() {
     e.addEventListener('keydown', function (event) {
       if (event.key == 'Escape') {
         var input = event.target;
-        var search = sessionStorage.getItem(window.relearn.absBaseUri + '/search-value');
-        if (!search || !search.length) {
+        var search = window.relearn.getItem(window.sessionStorage, window.relearn.absBaseUri + '/search-value');
+        var words = (search ?? '').split(' ').filter((word) => word.trim() != '');
+        if (!words || !words.length) {
           input.blur();
         }
         searchInputHandler('');
         inputs.forEach(function (e) {
           e.value = '';
         });
-        if (!search || !search.length) {
+        if (!words || !words.length) {
           documentFocus();
         }
       }
@@ -1598,6 +1742,7 @@ function initSearch() {
         event.initEvent('input', false, false);
         e.dispatchEvent(event);
       });
+      window.relearn.removeItem(window.sessionStorage, window.relearn.absBaseUri + '/search-value');
       unmark();
     });
   });
@@ -1605,13 +1750,13 @@ function initSearch() {
   var urlParams = new URLSearchParams(window.location.search);
   var value = urlParams.get('search-by');
   if (value) {
-    sessionStorage.setItem(window.relearn.absBaseUri + '/search-value', value);
+    window.relearn.setItem(window.sessionStorage, window.relearn.absBaseUri + '/search-value', value);
+    mark();
   }
-  mark();
 
   // set initial search value for inputs on page load
-  if (sessionStorage.getItem(window.relearn.absBaseUri + '/search-value')) {
-    var search = sessionStorage.getItem(window.relearn.absBaseUri + '/search-value');
+  var search = window.relearn.getItem(window.sessionStorage, window.relearn.absBaseUri + '/search-value');
+  if (search) {
     inputs.forEach(function (e) {
       e.value = search;
       var event = document.createEvent('Event');
@@ -1620,8 +1765,8 @@ function initSearch() {
     });
   }
 
-  window.relearn.isSearchInit = true;
-  window.relearn.runInitialSearch && window.relearn.runInitialSearch();
+  window.relearn.isSearchInterfaceReady = true;
+  window.relearn.executeInitialSearch && window.relearn.executeInitialSearch();
 }
 
 document.addEventListener('themeVariantLoaded', function (ev) {
@@ -1652,8 +1797,8 @@ function useMermaid(config) {
     mermaid.initialize(Object.assign({ securityLevel: 'antiscript', startOnLoad: false }, config));
   }
 }
-if (window.themeUseMermaid) {
-  useMermaid(window.themeUseMermaid);
+if (window.relearn.themeUseMermaid) {
+  useMermaid(window.relearn.themeUseMermaid);
 }
 
 function useOpenapi(config) {
@@ -1661,8 +1806,8 @@ function useOpenapi(config) {
     config.css = window.relearn.relBasePath + config.css;
   }
 }
-if (window.themeUseOpenapi) {
-  useOpenapi(window.themeUseOpenapi);
+if (window.relearn.themeUseOpenapi) {
+  useOpenapi(window.relearn.themeUseOpenapi);
 }
 
 function ready(fn) {
@@ -1676,6 +1821,10 @@ function ready(fn) {
 ready(function () {
   initArrowVerticalNav();
   initArrowHorizontalNav();
+  handleHistoryClearer();
+  handleLanguageSwitcher();
+  handleVariantSwitcher();
+  handleVersionSwitcher();
   initMermaid();
   initOpenapi();
   initMenuScrollbar();
@@ -1822,19 +1971,21 @@ ready(function () {
     moveTopbarButtons();
     adjustEmptyTopbarContents();
   }
-  var mqs = window.matchMedia('only screen and (max-width: 47.999rem)');
-  mqs.addEventListener('change', onWidthChange.bind(null, setWidthS));
-  var mqm = window.matchMedia('only screen and (min-width: 48rem) and (max-width: 59.999rem)');
-  mqm.addEventListener('change', onWidthChange.bind(null, setWidthM));
-  var mql = window.matchMedia('only screen and (min-width: 60rem)');
-  mql.addEventListener('change', onWidthChange.bind(null, setWidthL));
+  if (topbar) {
+    var mqs = window.matchMedia('only screen and (max-width: 47.999rem)');
+    mqs.addEventListener('change', onWidthChange.bind(null, setWidthS));
+    var mqm = window.matchMedia('only screen and (min-width: 48rem) and (max-width: 59.999rem)');
+    mqm.addEventListener('change', onWidthChange.bind(null, setWidthM));
+    var mql = window.matchMedia('only screen and (min-width: 60rem)');
+    mql.addEventListener('change', onWidthChange.bind(null, setWidthL));
 
-  addTopbarButtonInfos();
-  setWidthS(mqs);
-  setWidthM(mqm);
-  setWidthL(mql);
-  moveTopbarButtons();
-  adjustEmptyTopbarContents();
+    addTopbarButtonInfos();
+    setWidthS(mqs);
+    setWidthM(mqm);
+    setWidthL(mql);
+    moveTopbarButtons();
+    adjustEmptyTopbarContents();
+  }
 })();
 
 (function () {
@@ -1867,3 +2018,81 @@ function normalizeColor(c) {
   c = c.replace(/ +/g, ' ');
   return c;
 }
+
+function initVersionIndex(index) {
+  if (!index || !index.length) {
+    return;
+  }
+
+  document.querySelectorAll('.R-versionswitcher select').forEach(function (select) {
+    var preSelectedOption = select.querySelector('[data-selected]')?.cloneNode(true);
+
+    var selectedOption = null;
+    if (select.selectedIndex >= 0) {
+      selectedOption = select.options[select.selectedIndex].cloneNode(true);
+    }
+
+    // Remove all existing options
+    while (select.firstChild) {
+      select.removeChild(select.firstChild);
+    }
+
+    // Add all options from the index
+    index.forEach(function (version) {
+      // Create new option element
+      var option = document.createElement('option');
+      option.id = 'R-select-version-' + version.value;
+      option.value = version.value;
+      option.dataset.abs = version.isAbs;
+      option.dataset.uri = version.baseURL;
+      option.dataset.identifier = version.identifier;
+      option.textContent = version.title;
+
+      // Add the option to the select
+      select.appendChild(option);
+    });
+
+    if (preSelectedOption) {
+      const option = select.querySelector(`option[value="${preSelectedOption.value}"]`);
+      if (!option) {
+        select.appendChild(preSelectedOption);
+      } else {
+        option.dataset.selected = '';
+      }
+    }
+    if (selectedOption) {
+      // Re-select the previously selected option if it exists
+      const option = select.querySelector(`option[value="${selectedOption.value}"]`);
+      if (!option) {
+        select.appendChild(selectedOption);
+      }
+      select.value = selectedOption.value;
+    } else if (select.options.length > 0) {
+      // If there was no selection before, select the first option
+      select.selectedIndex = 0;
+      return;
+    }
+  });
+}
+
+function initVersionJs() {
+  if (window.relearn.version_js_url) {
+    var js = document.createElement('script');
+    // we need to add a random number on each call to read this file fresh from the server;
+    // it may reside in a different Hugo instance and therefore we do not know when it changes
+    var url = new URL(window.relearn.version_js_url, window.location.href);
+    var randomNum = Math.floor(Math.random() * 1000000);
+    url.searchParams.set('v', randomNum.toString());
+    js.src = url.toString();
+    js.setAttribute('async', '');
+    js.onload = function () {
+      initVersionIndex(relearn_versionindex);
+    };
+    js.onerror = function (e) {
+      console.error('Error getting version index file');
+    };
+    document.head.appendChild(js);
+  }
+}
+
+initVersionJs();

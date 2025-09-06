@@ -8,10 +8,10 @@
   --SECONDARY-color: rgba(72, 106, 201, 1); /* brand secondary color */
   --ACCENT-color: rgb(255, 102, 78); /* brand accent color, used for search highlights */
 
-  --MAIN-TEXT-color: rgba(0, 0, 0, 1); /* text color of content and h1 titles */
+  --MAIN-TEXT-color: rgba(0, 0, 0, 1); /* text color of content and titles */
   --MAIN-LINK-HOVER-color: rgba(32, 40, 145, 1); /* hovered link color of content */
   --MAIN-BG-color: rgba(255, 255, 255, 1); /* background color of content */
-  --MAIN-TITLES-TEXT-color: rgba(16, 16, 16, 1); /* text color of h2-h6 titles and transparent box titles */
+  --MAIN-TITLES-TEXT-color: rgba(16, 16, 16, 1); /* text color of titles and transparent box titles */
 
   --CODE-theme: relearn-light; /* name of the chroma stylesheet file */
   --CODE-BLOCK-color: rgba(39, 40, 34, 1); /* fallback text color of block code; should be adjusted to your selected chroma style */
@@ -26,12 +26,14 @@
   --OPENAPI-theme: light; /* name of the default OpenAPI theme for this variant, can be overridden in hugo.toml */
   --OPENAPI-CODE-theme: idea; /* name of the default OpenAPI code theme for this variant, can be overridden in hugo.toml */
 
-  --MENU-HOME-LINK-color: rgba(64, 64, 64, 1); /* home button color if configured */
-  --MENU-HOME-LINK-HOVER-color: rgba(0, 0, 0, 1); /* hovered home button color if configured */
+  --MENU-HEADER-color: rgba(40, 40, 40, 1); /* color of menu header */
 
   --MENU-SEARCH-color: rgba(224, 224, 224, 1); /* text and icon color of search box */
   --MENU-SEARCH-BG-color: rgba(50, 50, 50, 1); /* background color of search box */
   --MENU-SEARCH-BORDER-color: rgba(224, 224, 224, 1); /* border color of search box */
+
+  --MENU-HOME-LINK-color: rgba(64, 64, 64, 1); /* home button color if configured */
+  --MENU-HOME-LINK-HOVER-color: rgba(0, 0, 0, 1); /* hovered home button color if configured */
 
   --MENU-SECTIONS-BG-color: rgba(40, 40, 40, 1); /* background of the menu; this is NOT just a color value but can be a complete CSS background definition including gradients, etc. */
   --MENU-SECTIONS-ACTIVE-BG-color: rgba(0, 0, 0, 0.166); /* background color of the active menu section */
@@ -141,10 +143,10 @@
   --SECONDARY-color: rgba(108, 140, 227, 1); /* brand secondary color */
   --ACCENT-color: rgb(255, 102, 78, 1); /* brand accent color, used for search highlights */
 
-  --MAIN-TEXT-color: rgba(224, 224, 224, 1); /* text color of content and h1 titles */
+  --MAIN-TEXT-color: rgba(224, 224, 224, 1); /* text color of content and titles */
   --MAIN-LINK-HOVER-color: rgba(147, 176, 255, 1); /* hovered link color of content */
   --MAIN-BG-color: rgba(32, 32, 32, 1); /* background color of content */
-  --MAIN-TITLES-TEXT-color: rgba(255, 255, 255, 1); /* text color of h2-h6 titles and transparent box titles */
+  --MAIN-TITLES-TEXT-color: rgba(255, 255, 255, 1); /* text color of titles and transparent box titles */
 
   --CODE-theme: relearn-dark; /* name of the chroma stylesheet file */
   --CODE-BLOCK-color: rgba(248, 248, 242, 1); /* fallback text color of block code; should be adjusted to your selected chroma style */
@@ -159,12 +161,14 @@
   --OPENAPI-theme: dark; /* name of the default OpenAPI theme for this variant, can be overridden in hugo.toml */
   --OPENAPI-CODE-theme: obsidian; /* name of the default OpenAPI code theme for this variant, can be overridden in hugo.toml */
 
-  --MENU-HOME-LINK-color: rgba(64, 64, 64, 1); /* home button color if configured */
-  --MENU-HOME-LINK-HOVER-color: rgba(0, 0, 0, 1); /* hovered home button color if configured */
+  --MENU-HEADER-color: rgba(40, 40, 40, 1); /* color of menu header */
 
   --MENU-SEARCH-color: rgba(224, 224, 224, 1); /* text and icon color of search box */
   --MENU-SEARCH-BG-color: rgba(50, 50, 50, 1); /* background color of search box */
   --MENU-SEARCH-BORDER-color: rgba(224, 224, 224, 1); /* border color of search box */
+
+  --MENU-HOME-LINK-color: rgba(64, 64, 64, 1); /* home button color if configured */
+  --MENU-HOME-LINK-HOVER-color: rgba(0, 0, 0, 1); /* hovered home button color if configured */
 
   --MENU-SECTIONS-BG-color: rgba(43, 43, 43, 1); /* background of the menu; this is NOT just a color value but can be a complete CSS background definition including gradients, etc. */
   --MENU-SECTIONS-LINK-color: rgba(186, 186, 186, 1); /* link color of menu topics */
@@ -278,10 +282,10 @@
   --SECONDARY-color: rgba(72, 106, 201, 1); /* brand secondary color */
   --ACCENT-color: rgb(255, 102, 78); /* brand accent color, used for search highlights */
 
-  --MAIN-TEXT-color: rgba(0, 0, 0, 1); /* text color of content and h1 titles */
+  --MAIN-TEXT-color: rgba(0, 0, 0, 1); /* text color of content and titles */
   --MAIN-LINK-HOVER-color: rgba(32, 40, 145, 1); /* hovered link color of content */
   --MAIN-BG-color: rgba(255, 255, 255, 1); /* background color of content */
-  --MAIN-TITLES-TEXT-color: rgba(16, 16, 16, 1); /* text color of h2-h6 titles and transparent box titles */
+  --MAIN-TITLES-TEXT-color: rgba(16, 16, 16, 1); /* text color of titles and transparent box titles */
 
   --CODE-theme: relearn-light; /* name of the chroma stylesheet file */
   --CODE-BLOCK-color: rgba(39, 40, 34, 1); /* fallback text color of block code; should be adjusted to your selected chroma style */
@@ -296,12 +300,14 @@
   --OPENAPI-theme: light; /* name of the default OpenAPI theme for this variant, can be overridden in hugo.toml */
   --OPENAPI-CODE-theme: idea; /* name of the default OpenAPI code theme for this variant, can be overridden in hugo.toml */
 
-  --MENU-HOME-LINK-color: rgba(64, 64, 64, 1); /* home button color if configured */
-  --MENU-HOME-LINK-HOVER-color: rgba(0, 0, 0, 1); /* hovered home button color if configured */
+  --MENU-HEADER-color: rgba(40, 40, 40, 1); /* color of menu header */
 
   --MENU-SEARCH-color: rgba(224, 224, 224, 1); /* text and icon color of search box */
   --MENU-SEARCH-BG-color: rgba(50, 50, 50, 1); /* background color of search box */
   --MENU-SEARCH-BORDER-color: rgba(224, 224, 224, 1); /* border color of search box */
+
+  --MENU-HOME-LINK-color: rgba(64, 64, 64, 1); /* home button color if configured */
+  --MENU-HOME-LINK-HOVER-color: rgba(0, 0, 0, 1); /* hovered home button color if configured */
 
   --MENU-SECTIONS-BG-color: rgba(40, 40, 40, 1); /* background of the menu; this is NOT just a color value but can be a complete CSS background definition including gradients, etc. */
   --MENU-SECTIONS-ACTIVE-BG-color: rgba(0, 0, 0, 0.166); /* background color of the active menu section */
@@ -424,11 +430,6 @@ html {
 body {
   background-color: rgba(255, 255, 255, 1);
 }
-code.copy-to-clipboard-code {
-  border-start-end-radius: 2px;
-  border-end-end-radius: 2px;
-  border-inline-end-width: 1px;
-}
 pre:not(.mermaid) {
   border: 1px solid rgba(204, 204, 204, 1);
 }
@@ -450,7 +451,10 @@ pre:not(.mermaid) {
     visibility: visible;
   }
 }
-#R-body .copy-to-clipboard-button {
+
+code.copy-to-clipboard-code:after,
+.inline-copy-to-clipboard-button,
+.block-copy-to-clipboard-button {
   display: none;
 }
 
@@ -596,7 +600,7 @@ article {
   width: 100%;
 }
 
-#R-body #R-body-inner > .flex-block-wrapper article.narrow p {
+#R-body #R-body-inner > .flex-block-wrapper article.narrow > p {
   font-size: 1.015625rem;
   text-align: start;
 }

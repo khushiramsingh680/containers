@@ -1,21 +1,27 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:56245/containers/docker/container01/</loc>
-  </url><url>
-    <loc>http://localhost:56245/containers/docker/conatiner02/</loc>
-  </url><url>
-    <loc>http://localhost:56245/containers/docker/container03/</loc>
-  </url><url>
-    <loc>http://localhost:56245/containers/docker/</loc>
-    <lastmod>2025-09-03T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:56245/containers/</loc>
-    <lastmod>2025-09-03T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:56245/containers/categories/</loc>
-  </url><url>
-    <loc>http://localhost:56245/containers/tags/</loc>
+    <loc>https://khushiramsingh680.github.io/containers/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/containers/containers/container01/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/containers/containers/conatiner02/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/containers/containers/container03/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/containers/containers/container04/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/containers/categories/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/containers/containers/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/containers/tags/index.html</loc>
   </url>
 </urlset>

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr" itemscope itemtype="http://schema.org/Article" data-r-output-format="html">
+  <head><script src="/containers/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=containers/livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="generator" content="Hugo 0.139.3">
+    <meta name="generator" content="Relearn 8.0.0+9803d5122ebb3276acea823f476e9eb44f607862">
+    <meta name="description" content="Docker Architecture – Workflow &#43;----------------&#43; Unix Socket / REST API &#43;----------------&#43; | Docker Client | ----------------------------&gt; | Docker Daemon | | (CLI / GUI) | | (dockerd) | &#43;----------------&#43; &#43;----------------&#43; | | Uses container runtime (containerd) v &#43;-----------------------&#43; | Container Runtime | | (containerd / CRI-O) | &#43;-----------------------&#43; | | Creates &amp; manages v &#43;-----------------------&#43; | Containers | | (Running Apps) | &#43;-----------------------&#43; ^ | Images | &#43;-----------------------&#43; | Docker Registry | | (Docker Hub / Private)| &#43;-----------------------&#43;Docker CLI | v Docker Daemon (dockerd) | v containerd (high-level runtime) | v runc (low-level runtime, OCI-compliant) | v Linux Kernel (namespaces, cgroups, filesystem)Components Explained 1. Docker Client (CLI) Interface to interact with Docker (docker run, docker build). Sends commands to Docker daemon via: Unix socket (/var/run/docker.sock) TCP/REST API (optional, for remote management) 2. Docker Daemon (dockerd) Background service managing containers, images, networks, and volumes. Receives commands from CLI. Delegates container creation to the container runtime. 3. Container Runtime Low-level manager responsible for running containers. Docker uses containerd by default. Handles: Image unpacking Container lifecycle Storage and logging Communicates with daemon via API or socket. 4 Low-level Runtime The low-level runtime is responsible for actually creating and running containers on the host OS. runc is the default low-level runtime used by Docker, containerd, and CRI-O. Responsibilities of the low-level runtime: Creating namespaces for process isolation Managing cgroups for resource limits Mounting filesystems for container file isolation Directly interacting with the Linux kernel to run containers It implements the OCI runtime specification, ensuring containers are standardized and portable. High-level runtimes like containerd or CRI-O call the low-level runtime to execute containers. 5. Docker Registries Store and distribute container images. Docker Hub: Public registry. Private registries: Internal organization use. Commands: docker pull, docker push. 6. Communication Flow User runs docker run nginx. CLI sends request via Unix socket to daemon. Daemon pulls image from registry (if needed). Daemon delegates container creation to containerd. containerd interacts with OS kernel to start the container. Daemon sends container info back to CLI. 7. Socket Exposure Unix socket: /var/run/docker.sock (local access, secure) TCP socket: tcp://0.0.0.0:2375 (remote access, insecure) Kubernetes CRI sockets: CRI-O: /var/run/crio/crio.sock containerd: /run/containerd/containerd.sock">
+    <meta name="author" content="">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Part 03 :: Learn containers">
+    <meta name="twitter:description" content="Docker Architecture – Workflow &#43;----------------&#43; Unix Socket / REST API &#43;----------------&#43; | Docker Client | ----------------------------&gt; | Docker Daemon | | (CLI / GUI) | | (dockerd) | &#43;----------------&#43; &#43;----------------&#43; | | Uses container runtime (containerd) v &#43;-----------------------&#43; | Container Runtime | | (containerd / CRI-O) | &#43;-----------------------&#43; | | Creates &amp; manages v &#43;-----------------------&#43; | Containers | | (Running Apps) | &#43;-----------------------&#43; ^ | Images | &#43;-----------------------&#43; | Docker Registry | | (Docker Hub / Private)| &#43;-----------------------&#43;Docker CLI | v Docker Daemon (dockerd) | v containerd (high-level runtime) | v runc (low-level runtime, OCI-compliant) | v Linux Kernel (namespaces, cgroups, filesystem)Components Explained 1. Docker Client (CLI) Interface to interact with Docker (docker run, docker build). Sends commands to Docker daemon via: Unix socket (/var/run/docker.sock) TCP/REST API (optional, for remote management) 2. Docker Daemon (dockerd) Background service managing containers, images, networks, and volumes. Receives commands from CLI. Delegates container creation to the container runtime. 3. Container Runtime Low-level manager responsible for running containers. Docker uses containerd by default. Handles: Image unpacking Container lifecycle Storage and logging Communicates with daemon via API or socket. 4 Low-level Runtime The low-level runtime is responsible for actually creating and running containers on the host OS. runc is the default low-level runtime used by Docker, containerd, and CRI-O. Responsibilities of the low-level runtime: Creating namespaces for process isolation Managing cgroups for resource limits Mounting filesystems for container file isolation Directly interacting with the Linux kernel to run containers It implements the OCI runtime specification, ensuring containers are standardized and portable. High-level runtimes like containerd or CRI-O call the low-level runtime to execute containers. 5. Docker Registries Store and distribute container images. Docker Hub: Public registry. Private registries: Internal organization use. Commands: docker pull, docker push. 6. Communication Flow User runs docker run nginx. CLI sends request via Unix socket to daemon. Daemon pulls image from registry (if needed). Daemon delegates container creation to containerd. containerd interacts with OS kernel to start the container. Daemon sends container info back to CLI. 7. Socket Exposure Unix socket: /var/run/docker.sock (local access, secure) TCP socket: tcp://0.0.0.0:2375 (remote access, insecure) Kubernetes CRI sockets: CRI-O: /var/run/crio/crio.sock containerd: /run/containerd/containerd.sock">
+    <meta property="og:url" content="http://localhost:1313/containers/containers/container03-copy/index.html">
+    <meta property="og:site_name" content="Learn containers">
+    <meta property="og:title" content="Part 03 :: Learn containers">
+    <meta property="og:description" content="Docker Architecture – Workflow &#43;----------------&#43; Unix Socket / REST API &#43;----------------&#43; | Docker Client | ----------------------------&gt; | Docker Daemon | | (CLI / GUI) | | (dockerd) | &#43;----------------&#43; &#43;----------------&#43; | | Uses container runtime (containerd) v &#43;-----------------------&#43; | Container Runtime | | (containerd / CRI-O) | &#43;-----------------------&#43; | | Creates &amp; manages v &#43;-----------------------&#43; | Containers | | (Running Apps) | &#43;-----------------------&#43; ^ | Images | &#43;-----------------------&#43; | Docker Registry | | (Docker Hub / Private)| &#43;-----------------------&#43;Docker CLI | v Docker Daemon (dockerd) | v containerd (high-level runtime) | v runc (low-level runtime, OCI-compliant) | v Linux Kernel (namespaces, cgroups, filesystem)Components Explained 1. Docker Client (CLI) Interface to interact with Docker (docker run, docker build). Sends commands to Docker daemon via: Unix socket (/var/run/docker.sock) TCP/REST API (optional, for remote management) 2. Docker Daemon (dockerd) Background service managing containers, images, networks, and volumes. Receives commands from CLI. Delegates container creation to the container runtime. 3. Container Runtime Low-level manager responsible for running containers. Docker uses containerd by default. Handles: Image unpacking Container lifecycle Storage and logging Communicates with daemon via API or socket. 4 Low-level Runtime The low-level runtime is responsible for actually creating and running containers on the host OS. runc is the default low-level runtime used by Docker, containerd, and CRI-O. Responsibilities of the low-level runtime: Creating namespaces for process isolation Managing cgroups for resource limits Mounting filesystems for container file isolation Directly interacting with the Linux kernel to run containers It implements the OCI runtime specification, ensuring containers are standardized and portable. High-level runtimes like containerd or CRI-O call the low-level runtime to execute containers. 5. Docker Registries Store and distribute container images. Docker Hub: Public registry. Private registries: Internal organization use. Commands: docker pull, docker push. 6. Communication Flow User runs docker run nginx. CLI sends request via Unix socket to daemon. Daemon pulls image from registry (if needed). Daemon delegates container creation to containerd. containerd interacts with OS kernel to start the container. Daemon sends container info back to CLI. 7. Socket Exposure Unix socket: /var/run/docker.sock (local access, secure) TCP socket: tcp://0.0.0.0:2375 (remote access, insecure) Kubernetes CRI sockets: CRI-O: /var/run/crio/crio.sock containerd: /run/containerd/containerd.sock">
+    <meta property="og:locale" content="en_us">
+    <meta property="og:type" content="article">
+    <meta property="article:section" content="Docker">
+    <meta itemprop="name" content="Part 03 :: Learn containers">
+    <meta itemprop="description" content="Docker Architecture – Workflow &#43;----------------&#43; Unix Socket / REST API &#43;----------------&#43; | Docker Client | ----------------------------&gt; | Docker Daemon | | (CLI / GUI) | | (dockerd) | &#43;----------------&#43; &#43;----------------&#43; | | Uses container runtime (containerd) v &#43;-----------------------&#43; | Container Runtime | | (containerd / CRI-O) | &#43;-----------------------&#43; | | Creates &amp; manages v &#43;-----------------------&#43; | Containers | | (Running Apps) | &#43;-----------------------&#43; ^ | Images | &#43;-----------------------&#43; | Docker Registry | | (Docker Hub / Private)| &#43;-----------------------&#43;Docker CLI | v Docker Daemon (dockerd) | v containerd (high-level runtime) | v runc (low-level runtime, OCI-compliant) | v Linux Kernel (namespaces, cgroups, filesystem)Components Explained 1. Docker Client (CLI) Interface to interact with Docker (docker run, docker build). Sends commands to Docker daemon via: Unix socket (/var/run/docker.sock) TCP/REST API (optional, for remote management) 2. Docker Daemon (dockerd) Background service managing containers, images, networks, and volumes. Receives commands from CLI. Delegates container creation to the container runtime. 3. Container Runtime Low-level manager responsible for running containers. Docker uses containerd by default. Handles: Image unpacking Container lifecycle Storage and logging Communicates with daemon via API or socket. 4 Low-level Runtime The low-level runtime is responsible for actually creating and running containers on the host OS. runc is the default low-level runtime used by Docker, containerd, and CRI-O. Responsibilities of the low-level runtime: Creating namespaces for process isolation Managing cgroups for resource limits Mounting filesystems for container file isolation Directly interacting with the Linux kernel to run containers It implements the OCI runtime specification, ensuring containers are standardized and portable. High-level runtimes like containerd or CRI-O call the low-level runtime to execute containers. 5. Docker Registries Store and distribute container images. Docker Hub: Public registry. Private registries: Internal organization use. Commands: docker pull, docker push. 6. Communication Flow User runs docker run nginx. CLI sends request via Unix socket to daemon. Daemon pulls image from registry (if needed). Daemon delegates container creation to containerd. containerd interacts with OS kernel to start the container. Daemon sends container info back to CLI. 7. Socket Exposure Unix socket: /var/run/docker.sock (local access, secure) TCP socket: tcp://0.0.0.0:2375 (remote access, insecure) Kubernetes CRI sockets: CRI-O: /var/run/crio/crio.sock containerd: /run/containerd/containerd.sock">
+    <meta itemprop="wordCount" content="359">
+    <title>Part 03 :: Learn containers</title>
+    <link href="../../containers/css/auto-complete/auto-complete.min.css?1757146694" rel="stylesheet">
+    <script src="../../containers/js/auto-complete/auto-complete.min.js?1757146694" defer></script>
+    <script src="../../containers/js/search-lunr.js?1757146694" defer></script>
+    <script src="../../containers/js/search.js?1757146694" defer></script>
+    <script>
+      window.relearn = window.relearn || {};
+      window.relearn.index_js_url="../../searchindex.en.js?1757146694";
+    </script>
+    <script src="../../containers/js/lunr/lunr.min.js?1757146694" defer></script>
+    <script src="../../containers/js/lunr/lunr.stemmer.support.min.js?1757146694" defer></script>
+    <script src="../../containers/js/lunr/lunr.multi.min.js?1757146694" defer></script>
+    <script src="../../containers/js/lunr/lunr.en.min.js?1757146694" defer></script>
+    <script>
+      window.relearn = window.relearn || {};
+      window.relearn.contentLangs=['en'];
+    </script>
+    <link href="../../containers/fonts/fontawesome/css/fontawesome-all.min.css?1757146694" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../containers/fonts/fontawesome/css/fontawesome-all.min.css?1757146694" rel="stylesheet"></noscript>
+    <link href="../../containers/css/perfect-scrollbar/perfect-scrollbar.min.css?1757146694" rel="stylesheet">
+    <link href="../../css/theme.css?1757146694" rel="stylesheet">
+    <link href="../../css/format-html.css?1757146694" rel="stylesheet" id="R-format-style">
+    <script>
+      window.relearn = window.relearn || {};
+      // configuration
+      window.relearn.min = ``;
+      window.relearn.path='\/containers\/container03-copy\/index.html';
+      window.relearn.relBasePath='..\/..';
+      window.relearn.relBaseUri='..\/..';
+      window.relearn.absBaseUri='http:\/\/localhost:1313\/containers';
+      window.relearn.disableAnchorCopy=false;
+      window.relearn.disableAnchorScrolling=false;
+      window.relearn.disableInlineCopyToClipboard=false;
+      window.relearn.enableBlockCodeWrap=true;
+      // legal
+      window.relearn.getItem = (s,n) => {return s.getItem(n)};
+      window.relearn.setItem = (s,n,v) => {return s.setItem(n,v)};
+      window.relearn.removeItem = (s,n) => {return s.removeItem(n)};
+      // translations
+      window.T_Copy_to_clipboard = `Copy to clipboard`;
+      window.T_Copied_to_clipboard = `Copied to clipboard!`;
+      window.T_Copy_link_to_clipboard = `Copy link to clipboard`;
+      window.T_Link_copied_to_clipboard = `Copied link to clipboard!`;
+      window.T_Reset_view = `Reset view`;
+      window.T_View_reset = `View reset!`;
+      window.T_No_results_found = `No results found for "{0}"`;
+      window.T_N_results_found = `{1} results found for "{0}"`;
+      // variant stuff
+      window.relearn.themevariants = [ 'auto' ];
+      window.relearn.customvariantname = "my-custom-variant";
+      window.relearn.changeVariant = function(variant) {
+        var oldVariant = document.documentElement.dataset.rThemeVariant;
+        window.relearn.setItem(window.localStorage, window.relearn.absBaseUri + "/variant", variant);
+        document.documentElement.dataset.rThemeVariant = variant;
+        if (oldVariant != variant) {
+          document.dispatchEvent( new CustomEvent('themeVariantLoaded', { detail: { variant, oldVariant } }) );
+          window.relearn.markVariant();
+        }
+      }
+      window.relearn.markVariant = function() {
+        var variant = window.relearn.getItem(window.localStorage, window.relearn.absBaseUri + "/variant");
+        document.querySelectorAll(".R-variantswitcher select").forEach((select) => {select.value = variant;});
+      }
+      window.relearn.initVariant = function() {
+        var variant = window.relearn.getItem(window.localStorage, window.relearn.absBaseUri + "/variant") ?? "";
+        if( variant == window.relearn.customvariantname ){
+        }else if( !variant || !window.relearn.themevariants.includes(variant) ){
+          variant = window.relearn.themevariants[0];
+          window.relearn.setItem(window.localStorage, window.relearn.absBaseUri + "/variant", variant);
+        }
+        document.documentElement.dataset.rThemeVariant = variant;
+      }
+      window.relearn.initVariant();
+      window.relearn.markVariant();
+    </script>
+  </head>
+  <body class="mobile-support html" data-url="../../containers/container03-copy/index.html">
+    <div id="R-body" class="default-animation">
+      <div id="R-body-overlay"></div>
+      <nav id="R-topbar">
+        <div class="topbar-wrapper">
+          <div class="topbar-sidebar-divider"></div>
+          <div class="topbar-area topbar-area-start" data-area="start">
+            <div class="topbar-button topbar-button-sidebar" data-content-empty="disable" data-width-s="show" data-width-m="hide" data-width-l="hide"><button class="topbar-control" onclick="toggleNav()" type="button" title="Menu (CTRL&#43;ALT&#43;n)"><i class="fa-fw fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+<nav class="TableOfContents">
+  <ul>
+    <li><a href="#docker-architecture--workflow">Docker Architecture – Workflow</a></li>
+    <li><a href="#components-explained">Components Explained</a>
+      <ul>
+        <li><a href="#1-docker-client-cli">1. Docker Client (CLI)</a></li>
+        <li><a href="#2-docker-daemon-dockerd">2. Docker Daemon (<code>dockerd</code>)</a></li>
+        <li><a href="#3-container-runtime">3. Container Runtime</a></li>
+        <li><a href="#4-low-level-runtime">4 Low-level Runtime</a></li>
+        <li><a href="#5-docker-registries">5. Docker Registries</a></li>
+        <li><a href="#6-communication-flow">6. Communication Flow</a></li>
+        <li><a href="#7-socket-exposure">7. Socket Exposure</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement" class=""><a itemprop="item" href="../../index.html"><span itemprop="name">Containers</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement" class=""><a itemprop="item" href="../../containers/index.html"><span itemprop="name">Docker</span></a><meta itemprop="position" content="2">&nbsp;>&nbsp;</li><li itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement" class=""><span itemprop="name">Part 03</span><meta itemprop="position" content="3"></li>
+          </ol>
+          <div class="topbar-area topbar-area-end" data-area="end">
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../containers/conatiner02/index.html" title="Part 02 (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../containers/container03/index.html" title="Part 03 (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+                  <div class="topbar-area topbar-area-more" data-area="more">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="R-main-overlay"></div>
+      <main id="R-body-inner" class="highlightable containers" tabindex="-1">
+        <div class="flex-block-wrapper">
+<article class="default">
+  <header class="headline">
+  </header>
+
+<h1 id="part-03">Part 03</h1>
+
+<h2 id="docker-architecture--workflow">Docker Architecture – Workflow</h2>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>+----------------+      Unix Socket / REST API       +----------------+
+</span></span><span style="display:flex;"><span>|  Docker Client |  ----------------------------&gt;   |  Docker Daemon |
+</span></span><span style="display:flex;"><span>|  (CLI / GUI)   |                                |  (dockerd)     |
+</span></span><span style="display:flex;"><span>+----------------+                                +----------------+
+</span></span><span style="display:flex;"><span>                                                        |
+</span></span><span style="display:flex;"><span>                                                        | Uses container runtime (containerd)
+</span></span><span style="display:flex;"><span>                                                        v
+</span></span><span style="display:flex;"><span>                                              +-----------------------+
+</span></span><span style="display:flex;"><span>                                              |  Container Runtime     |
+</span></span><span style="display:flex;"><span>                                              |  (containerd / CRI-O) |
+</span></span><span style="display:flex;"><span>                                              +-----------------------+
+</span></span><span style="display:flex;"><span>                                                        |
+</span></span><span style="display:flex;"><span>                                                        | Creates &amp; manages
+</span></span><span style="display:flex;"><span>                                                        v
+</span></span><span style="display:flex;"><span>                                              +-----------------------+
+</span></span><span style="display:flex;"><span>                                              |  Containers           |
+</span></span><span style="display:flex;"><span>                                              |  (Running Apps)       |
+</span></span><span style="display:flex;"><span>                                              +-----------------------+
+</span></span><span style="display:flex;"><span>                                                        ^
+</span></span><span style="display:flex;"><span>                                                        | Images
+</span></span><span style="display:flex;"><span>                                                        |
+</span></span><span style="display:flex;"><span>                                              +-----------------------+
+</span></span><span style="display:flex;"><span>                                              | Docker Registry       |
+</span></span><span style="display:flex;"><span>                                              | (Docker Hub / Private)|
+</span></span><span style="display:flex;"><span>                                              +-----------------------+</span></span></code></pre></div>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>Docker CLI
+</span></span><span style="display:flex;"><span>   |
+</span></span><span style="display:flex;"><span>   v
+</span></span><span style="display:flex;"><span>Docker Daemon (dockerd)
+</span></span><span style="display:flex;"><span>   |
+</span></span><span style="display:flex;"><span>   v
+</span></span><span style="display:flex;"><span>containerd  (high-level runtime)
+</span></span><span style="display:flex;"><span>   |
+</span></span><span style="display:flex;"><span>   v
+</span></span><span style="display:flex;"><span>runc       (low-level runtime, OCI-compliant)
+</span></span><span style="display:flex;"><span>   |
+</span></span><span style="display:flex;"><span>   v
+</span></span><span style="display:flex;"><span>Linux Kernel (namespaces, cgroups, filesystem)</span></span></code></pre></div>
+<h2 id="components-explained">Components Explained</h2>
+<h3 id="1-docker-client-cli">1. Docker Client (CLI)</h3>
+<ul>
+<li>Interface to interact with Docker (<code>docker run</code>, <code>docker build</code>).</li>
+<li>Sends commands to Docker daemon via:
+<ul>
+<li><strong>Unix socket</strong> (<code>/var/run/docker.sock</code>)</li>
+<li><strong>TCP/REST API</strong> (optional, for remote management)</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-docker-daemon-dockerd">2. Docker Daemon (<code>dockerd</code>)</h3>
+<ul>
+<li>Background service managing containers, images, networks, and volumes.</li>
+<li>Receives commands from CLI.</li>
+<li>Delegates container creation to the container runtime.</li>
+</ul>
+<h3 id="3-container-runtime">3. Container Runtime</h3>
+<ul>
+<li>Low-level manager responsible for running containers.</li>
+<li>Docker uses <strong>containerd</strong> by default.</li>
+<li>Handles:
+<ul>
+<li>Image unpacking</li>
+<li>Container lifecycle</li>
+<li>Storage and logging</li>
+</ul>
+</li>
+<li>Communicates with daemon via <strong>API or socket</strong>.</li>
+</ul>
+<h3 id="4-low-level-runtime">4 Low-level Runtime</h3>
+<ul>
+<li>The <strong>low-level runtime</strong> is responsible for actually creating and running containers on the host OS.</li>
+<li><strong>runc</strong> is the default low-level runtime used by Docker, containerd, and CRI-O.</li>
+<li>Responsibilities of the low-level runtime:
+<ul>
+<li>Creating <strong>namespaces</strong> for process isolation</li>
+<li>Managing <strong>cgroups</strong> for resource limits</li>
+<li>Mounting <strong>filesystems</strong> for container file isolation</li>
+<li>Directly interacting with the <strong>Linux kernel</strong> to run containers</li>
+</ul>
+</li>
+<li>It implements the <strong>OCI runtime specification</strong>, ensuring containers are standardized and portable.</li>
+<li>High-level runtimes like <strong>containerd</strong> or <strong>CRI-O</strong> call the low-level runtime to execute containers.</li>
+</ul>
+<h3 id="5-docker-registries">5. Docker Registries</h3>
+<ul>
+<li>Store and distribute container images.</li>
+<li><strong>Docker Hub</strong>: Public registry.</li>
+<li><strong>Private registries</strong>: Internal organization use.</li>
+<li>Commands: <code>docker pull</code>, <code>docker push</code>.</li>
+</ul>
+<h3 id="6-communication-flow">6. Communication Flow</h3>
+<ol>
+<li>User runs <code>docker run nginx</code>.</li>
+<li>CLI sends request via <strong>Unix socket</strong> to daemon.</li>
+<li>Daemon pulls image from <strong>registry</strong> (if needed).</li>
+<li>Daemon delegates container creation to <strong>containerd</strong>.</li>
+<li>containerd interacts with OS kernel to start the container.</li>
+<li>Daemon sends container info back to CLI.</li>
+</ol>
+<h3 id="7-socket-exposure">7. Socket Exposure</h3>
+<ul>
+<li><strong>Unix socket</strong>: <code>/var/run/docker.sock</code> (local access, secure)</li>
+<li><strong>TCP socket</strong>: <code>tcp://0.0.0.0:2375</code> (remote access, insecure)</li>
+<li>Kubernetes CRI sockets:
+<ul>
+<li>CRI-O: <code>/var/run/crio/crio.sock</code></li>
+<li>containerd: <code>/run/containerd/containerd.sock</code></li>
+</ul>
+</li>
+</ul>
+
+  <footer class="footline">
+  </footer>
+</article>
+        </div>
+      </main>
+    </div>
+    <aside id="R-sidebar" class="default-animation">
+      <div id="R-header-topbar" class="default-animation"></div>
+      <div id="R-header-wrapper" class="default-animation">
+        <div id="R-header" class="default-animation">
+          <a id="R-logo" class="R-default" href="../../index.html">
+            <div class="logo-title">Learn containers</div>
+          </a>
+        </div>
+        <search><form action="../../search/index.html" method="get">
+          <div class="searchbox default-animation">
+            <button class="search-detail" type="submit" title="Search (CTRL+ALT+f)"><i class="fas fa-search"></i></button>
+            <label class="a11y-only" for="R-search-by">Search</label>
+            <input data-search-input id="R-search-by" name="search-by" class="search-by" type="search" placeholder="Search...">
+            <button class="search-clear" type="button" data-search-clear="" title="Clear search"><i class="fas fa-times" title="Clear search"></i></button>
+          </div>
+        </form></search>
+      </div>
+      <div id="R-homelinks" class="default-animation homelinks">
+        <div class="R-menu-divider default-animation">
+          <hr class="padding">
+        </div>
+        <div class="R-sidebarmenu R-shortcutmenu-homelinks">
+          <ul class="space collapsible-menu">
+            <li class="" data-nav-id="/index.html"><a class="padding" href="../../index.html"><i class="fa-fw fas fa-home"></i> Home</a></li>
+          </ul>
+        </div>
+        <div class="R-menu-divider default-animation">
+          <hr class="padding">
+        </div>
+        <div class="R-sidebarmenu R-shortcutmenu-headercontrols">
+          <ul class="">
+          </ul>
+        </div>
+        <div class="R-menu-divider default-animation">
+          <hr class="padding">
+        </div>
+      </div>
+      <div id="R-content-wrapper" class="highlightable">
+        <div class="R-sidebarmenu R-shortcutmenu-main">
+          <ul class="enlarge morespace collapsible-menu">
+            <li class="parent " data-nav-id="/containers/index.html"><a class="padding" href="../../containers/index.html">Docker</a><ul id="R-subsections-98e55644e7defe4a283b28e510b18cf5" class="collapsible-menu">
+            <li class="" data-nav-id="/containers/container01/index.html"><a class="padding" href="../../containers/container01/index.html">part 01</a></li>
+            <li class="" data-nav-id="/containers/conatiner02/index.html"><a class="padding" href="../../containers/conatiner02/index.html">Part 02</a></li>
+            <li class="active " data-nav-id="/containers/container03-copy/index.html"><a class="padding" href="../../containers/container03-copy/index.html">Part 03</a></li>
+            <li class="" data-nav-id="/containers/container03/index.html"><a class="padding" href="../../containers/container03/index.html">Part 03</a></li></ul></li>
+          </ul>
+        </div>
+        <div class="R-sidebarmenu R-shortcutmenu-shortcuts">
+          <ul class="space collapsible-menu">
+          </ul>
+        </div>
+        <div id="R-footer-margin"></div>
+        <div class="R-menu-divider default-animation">
+          <hr class="padding">
+        </div>
+        <div class="R-sidebarmenu R-shortcutmenu-footercontrols">
+          <ul class="">
+          </ul>
+        </div>
+<div id="R-footer"><p>Built with <a href="https://github.com/McShelby/hugo-theme-relearn" title="love"><i class="fas fa-heart"></i></a> by <a href="https://gohugo.io/">Hugo</a></p></div>
+      </div>
+    </aside>
+    <script src="../../containers/js/clipboard/clipboard.min.js?1757146694" defer></script>
+    <script src="../../containers/js/perfect-scrollbar/perfect-scrollbar.min.js?1757146694" defer></script>
+    <script src="../../containers/js/theme.js?1757146694" defer></script>
+  </body>
+</html>

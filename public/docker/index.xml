@@ -2,31 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Container 100 hrs on Learn containers</title>
-    <link>http://localhost:56245/containers/docker/</link>
+    <link>http://localhost:1313/containers/docker/</link>
     <description>Recent content in Container 100 hrs on Learn containers</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 01 Jan 0001 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:56245/containers/docker/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/containers/docker/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Container 01</title>
-      <link>http://localhost:56245/containers/docker/container01/</link>
+      <link>http://localhost:1313/containers/docker/container01/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:56245/containers/docker/container01/</guid>
+      <guid>http://localhost:1313/containers/docker/container01/</guid>
       <description>&lt;h2 id=&#34;topics&#34;&gt;&lt;strong&gt;Topics&lt;/strong&gt;&lt;/h2&gt;&#xA;&lt;h3 id=&#34;1-linux-namespaces&#34;&gt;1. &lt;strong&gt;Linux Namespaces&lt;/strong&gt;&lt;/h3&gt;&#xA;&lt;h3 id=&#34;2-linux-cgroups&#34;&gt;2. &lt;strong&gt;Linux Cgroups&lt;/strong&gt;&lt;/h3&gt;&#xA;&lt;h3 id=&#34;3-unshare&#34;&gt;3. &lt;strong&gt;Unshare&lt;/strong&gt;&lt;/h3&gt;&#xA;&lt;h3 id=&#34;4-chroot&#34;&gt;4. &lt;strong&gt;chroot&lt;/strong&gt;&lt;/h3&gt;&#xA;&lt;h3 id=&#34;introduction-what-are-linux-namespaces&#34;&gt;Introduction: What Are Linux Namespaces?&lt;/h3&gt;&#xA;&lt;p&gt;By default, &lt;strong&gt;all processes on a Linux system share the same namespaces&lt;/strong&gt; for things like process IDs, network, mounts, etc. This means:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;All processes see the same list of processes.&lt;/li&gt;&#xA;&lt;li&gt;All processes share the same network interfaces and IP addresses.&lt;/li&gt;&#xA;&lt;li&gt;All processes see the same filesystem mount points.&lt;/li&gt;&#xA;&lt;li&gt;All processes share the same hostname.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;hr&gt;&#xA;&lt;h3 id=&#34;why-do-we-need-namespaces&#34;&gt;Why Do We Need Namespaces?&lt;/h3&gt;&#xA;&lt;p&gt;Namespaces allow the Linux kernel to &lt;strong&gt;isolate and virtualize system resources&lt;/strong&gt; so that a group of processes can have their own view of the system. This is key for:&lt;/p&gt;</description>
     </item>
     <item>
       <title>Container 02</title>
-      <link>http://localhost:56245/containers/docker/conatiner02/</link>
+      <link>http://localhost:1313/containers/docker/conatiner02/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:56245/containers/docker/conatiner02/</guid>
+      <guid>http://localhost:1313/containers/docker/conatiner02/</guid>
       <description>&lt;h2 id=&#34;open-container-initiative-oci-and-container-standards&#34;&gt;Open Container Initiative (OCI) and Container Standards&lt;/h2&gt;&#xA;&lt;h2 id=&#34;what-is-oci&#34;&gt;What is OCI?&lt;/h2&gt;&#xA;&lt;p&gt;The &lt;strong&gt;Open Container Initiative (OCI)&lt;/strong&gt; is an open governance project under the Linux Foundation started in 2015. It creates open standards for container formats and runtimes to ensure interoperability and portability across container platforms.&lt;/p&gt;&#xA;&lt;h2 id=&#34;key-oci-specifications&#34;&gt;Key OCI Specifications&lt;/h2&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;&lt;strong&gt;OCI Image Format Specification&lt;/strong&gt;&lt;br&gt;&#xA;Defines a standard image format including layers, manifests, and metadata so images are portable across tools.&lt;/p&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;&lt;strong&gt;OCI Runtime Specification&lt;/strong&gt;&lt;br&gt;&#xA;Defines how to run containers using namespaces, cgroups, hooks, and other OS features.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Container 03</title>
-      <link>http://localhost:56245/containers/docker/container03/</link>
+      <link>http://localhost:1313/containers/docker/container03/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:56245/containers/docker/container03/</guid>
+      <guid>http://localhost:1313/containers/docker/container03/</guid>
       <description>&lt;h2 id=&#34;apparmor-with-docker-and-kubernetes&#34;&gt;AppArmor with Docker and Kubernetes&lt;/h2&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;what-is-apparmor&#34;&gt;What is AppArmor?&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;AppArmor&lt;/strong&gt; is a Linux security module that restricts programs’ capabilities with per-program profiles.&lt;/li&gt;&#xA;&lt;li&gt;It controls what files, network, capabilities, and system calls a process (like a container) can access.&lt;/li&gt;&#xA;&lt;li&gt;Helps reduce the attack surface by limiting what containers can do.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;using-apparmor-with-docker&#34;&gt;Using AppArmor with Docker&lt;/h2&gt;&#xA;&lt;h3 id=&#34;step-1-check-if-apparmor-is-enabled&#34;&gt;Step 1: Check if AppArmor is enabled&lt;/h3&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo aa-status&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;apparmor-on-amazon-linux&#34;&gt;AppArmor on Amazon Linux?&lt;/h1&gt;&#xA;&lt;h2 id=&#34;why-aa-status-is-not-found&#34;&gt;Why &lt;code&gt;aa-status&lt;/code&gt; is not found?&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Amazon Linux &lt;strong&gt;does not come with AppArmor&lt;/strong&gt; installed or enabled by default.&lt;/li&gt;&#xA;&lt;li&gt;It primarily uses &lt;strong&gt;SELinux&lt;/strong&gt; (Security-Enhanced Linux) as its Linux security module.&lt;/li&gt;&#xA;&lt;li&gt;AppArmor is mainly found on Ubuntu, Debian, and SUSE-based distributions.&lt;/li&gt;&#xA;&lt;li&gt;Red Hat-based distros (including Amazon Linux) use SELinux.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;what-does-this-mean&#34;&gt;What does this mean?&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;You &lt;strong&gt;cannot use AppArmor commands&lt;/strong&gt; like &lt;code&gt;aa-status&lt;/code&gt; on Amazon Linux.&lt;/li&gt;&#xA;&lt;li&gt;To use AppArmor, you would need a host running Ubuntu or Debian.&lt;/li&gt;&#xA;&lt;li&gt;On Amazon Linux, &lt;strong&gt;SELinux&lt;/strong&gt; is the default Mandatory Access Control system.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;what-should-you-do-on-amazon-linux&#34;&gt;What should you do on Amazon Linux?&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Explore and use &lt;strong&gt;SELinux&lt;/strong&gt; for security policies.&lt;/li&gt;&#xA;&lt;li&gt;Use SELinux with Docker and Kubernetes to enforce container security.&lt;/li&gt;&#xA;&lt;li&gt;SELinux provides similar (sometimes more granular) control compared to AppArmor.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;want-selinux-basics-and-examples&#34;&gt;Want SELinux basics and examples?&lt;/h2&gt;&#xA;&lt;p&gt;I can help with:&lt;/p&gt;</description>
     </item>
   </channel>

@@ -1,7 +1,7 @@
 baseURL = 'https://khushiramsingh680.github.io/containers/'
 languageCode = 'en-us'
 title = 'Learn containers'
-theme = 'hugo-theme-relearn'
+theme = 'relearn'
 relativeURLs = true
 canonifyURLs = true
 

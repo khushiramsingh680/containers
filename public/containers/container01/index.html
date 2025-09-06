@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr" itemscope itemtype="http://schema.org/Article" data-r-output-format="html">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="generator" content="Hugo 0.139.3">
+    <meta name="generator" content="Relearn 8.0.0+9803d5122ebb3276acea823f476e9eb44f607862">
+    <meta name="description" content="Topics 1. Linux Namespaces 2. Linux Cgroups 3. Unshare 4. chroot Introduction: What Are Linux Namespaces? By default, all processes on a Linux system share the same namespaces for things like process IDs, network, mounts, etc. This means:
+All processes see the same list of processes. All processes share the same network interfaces and IP addresses. All processes see the same filesystem mount points. All processes share the same hostname. Why Do We Need Namespaces? Namespaces allow the Linux kernel to isolate and virtualize system resources so that a group of processes can have their own view of the system. This is key for:">
+    <meta name="author" content="">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="part 01 :: Learn containers">
+    <meta name="twitter:description" content="Topics 1. Linux Namespaces 2. Linux Cgroups 3. Unshare 4. chroot Introduction: What Are Linux Namespaces? By default, all processes on a Linux system share the same namespaces for things like process IDs, network, mounts, etc. This means:
+All processes see the same list of processes. All processes share the same network interfaces and IP addresses. All processes see the same filesystem mount points. All processes share the same hostname. Why Do We Need Namespaces? Namespaces allow the Linux kernel to isolate and virtualize system resources so that a group of processes can have their own view of the system. This is key for:">
+    <meta property="og:url" content="https://khushiramsingh680.github.io/containers/containers/container01/index.html">
+    <meta property="og:site_name" content="Learn containers">
+    <meta property="og:title" content="part 01 :: Learn containers">
+    <meta property="og:description" content="Topics 1. Linux Namespaces 2. Linux Cgroups 3. Unshare 4. chroot Introduction: What Are Linux Namespaces? By default, all processes on a Linux system share the same namespaces for things like process IDs, network, mounts, etc. This means:
+All processes see the same list of processes. All processes share the same network interfaces and IP addresses. All processes see the same filesystem mount points. All processes share the same hostname. Why Do We Need Namespaces? Namespaces allow the Linux kernel to isolate and virtualize system resources so that a group of processes can have their own view of the system. This is key for:">
+    <meta property="og:locale" content="en_us">
+    <meta property="og:type" content="article">
+    <meta property="article:section" content="Docker">
+    <meta itemprop="name" content="part 01 :: Learn containers">
+    <meta itemprop="description" content="Topics 1. Linux Namespaces 2. Linux Cgroups 3. Unshare 4. chroot Introduction: What Are Linux Namespaces? By default, all processes on a Linux system share the same namespaces for things like process IDs, network, mounts, etc. This means:
+All processes see the same list of processes. All processes share the same network interfaces and IP addresses. All processes see the same filesystem mount points. All processes share the same hostname. Why Do We Need Namespaces? Namespaces allow the Linux kernel to isolate and virtualize system resources so that a group of processes can have their own view of the system. This is key for:">
+    <meta itemprop="wordCount" content="1331">
+    <title>part 01 :: Learn containers</title>
+    <link href="../../containers/css/auto-complete/auto-complete.min.css?1757149302" rel="stylesheet">
+    <script src="../../containers/js/auto-complete/auto-complete.min.js?1757149302" defer></script>
+    <script src="../../containers/js/search-lunr.min.js?1757149302" defer></script>
+    <script src="../../containers/js/search.min.js?1757149302" defer></script>
+    <script>
+      window.relearn = window.relearn || {};
+      window.relearn.index_js_url="../../searchindex.en.js?1757149302";
+    </script>
+    <script src="../../containers/js/lunr/lunr.min.js?1757149302" defer></script>
+    <script src="../../containers/js/lunr/lunr.stemmer.support.min.js?1757149302" defer></script>
+    <script src="../../containers/js/lunr/lunr.multi.min.js?1757149302" defer></script>
+    <script src="../../containers/js/lunr/lunr.en.min.js?1757149302" defer></script>
+    <script>
+      window.relearn = window.relearn || {};
+      window.relearn.contentLangs=['en'];
+    </script>
+    <link href="../../containers/fonts/fontawesome/css/fontawesome-all.min.css?1757149302" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../containers/fonts/fontawesome/css/fontawesome-all.min.css?1757149302" rel="stylesheet"></noscript>
+    <link href="../../containers/css/perfect-scrollbar/perfect-scrollbar.min.css?1757149302" rel="stylesheet">
+    <link href="../../css/theme.min.css?1757149302" rel="stylesheet">
+    <link href="../../css/format-html.min.css?1757149302" rel="stylesheet" id="R-format-style">
+    <script>
+      window.relearn = window.relearn || {};
+      // configuration
+      window.relearn.min = `.min`;
+      window.relearn.path='\/containers\/container01\/index.html';
+      window.relearn.relBasePath='..\/..';
+      window.relearn.relBaseUri='..\/..';
+      window.relearn.absBaseUri='https:\/\/khushiramsingh680.github.io\/containers';
+      window.relearn.disableAnchorCopy=false;
+      window.relearn.disableAnchorScrolling=false;
+      window.relearn.disableInlineCopyToClipboard=false;
+      window.relearn.enableBlockCodeWrap=true;
+      // legal
+      window.relearn.getItem = (s,n) => {return s.getItem(n)};
+      window.relearn.setItem = (s,n,v) => {return s.setItem(n,v)};
+      window.relearn.removeItem = (s,n) => {return s.removeItem(n)};
+      // translations
+      window.T_Copy_to_clipboard = `Copy to clipboard`;
+      window.T_Copied_to_clipboard = `Copied to clipboard!`;
+      window.T_Copy_link_to_clipboard = `Copy link to clipboard`;
+      window.T_Link_copied_to_clipboard = `Copied link to clipboard!`;
+      window.T_Reset_view = `Reset view`;
+      window.T_View_reset = `View reset!`;
+      window.T_No_results_found = `No results found for "{0}"`;
+      window.T_N_results_found = `{1} results found for "{0}"`;
+      // variant stuff
+      window.relearn.themevariants = [ 'auto' ];
+      window.relearn.customvariantname = "my-custom-variant";
+      window.relearn.changeVariant = function(variant) {
+        var oldVariant = document.documentElement.dataset.rThemeVariant;
+        window.relearn.setItem(window.localStorage, window.relearn.absBaseUri + "/variant", variant);
+        document.documentElement.dataset.rThemeVariant = variant;
+        if (oldVariant != variant) {
+          document.dispatchEvent( new CustomEvent('themeVariantLoaded', { detail: { variant, oldVariant } }) );
+          window.relearn.markVariant();
+        }
+      }
+      window.relearn.markVariant = function() {
+        var variant = window.relearn.getItem(window.localStorage, window.relearn.absBaseUri + "/variant");
+        document.querySelectorAll(".R-variantswitcher select").forEach((select) => {select.value = variant;});
+      }
+      window.relearn.initVariant = function() {
+        var variant = window.relearn.getItem(window.localStorage, window.relearn.absBaseUri + "/variant") ?? "";
+        if( variant == window.relearn.customvariantname ){
+        }else if( !variant || !window.relearn.themevariants.includes(variant) ){
+          variant = window.relearn.themevariants[0];
+          window.relearn.setItem(window.localStorage, window.relearn.absBaseUri + "/variant", variant);
+        }
+        document.documentElement.dataset.rThemeVariant = variant;
+      }
+      window.relearn.initVariant();
+      window.relearn.markVariant();
+    </script>
+  </head>
+  <body class="mobile-support html" data-url="../../containers/container01/index.html">
+    <div id="R-body" class="default-animation">
+      <div id="R-body-overlay"></div>
+      <nav id="R-topbar">
+        <div class="topbar-wrapper">
+          <div class="topbar-sidebar-divider"></div>
+          <div class="topbar-area topbar-area-start" data-area="start">
+            <div class="topbar-button topbar-button-sidebar" data-content-empty="disable" data-width-s="show" data-width-m="hide" data-width-l="hide"><button class="topbar-control" onclick="toggleNav()" type="button" title="Menu (CTRL&#43;ALT&#43;n)"><i class="fa-fw fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+<nav class="TableOfContents">
+  <ul>
+    <li><a href="#topics"><strong>Topics</strong></a>
+      <ul>
+        <li><a href="#1-linux-namespaces">1. <strong>Linux Namespaces</strong></a></li>
+        <li><a href="#2-linux-cgroups">2. <strong>Linux Cgroups</strong></a></li>
+        <li><a href="#3-unshare">3. <strong>Unshare</strong></a></li>
+        <li><a href="#4-chroot">4. <strong>chroot</strong></a></li>
+        <li><a href="#introduction-what-are-linux-namespaces">Introduction: What Are Linux Namespaces?</a></li>
+        <li><a href="#why-do-we-need-namespaces">Why Do We Need Namespaces?</a></li>
+        <li><a href="#how-to-create-new-namespaces">How to Create New Namespaces?</a></li>
+        <li><a href="#types-of-linux-namespaces-and-what-they-isolate">Types of Linux Namespaces and What They Isolate</a></li>
+        <li><a href="#hands-on-lab">Hands-On Lab</a></li>
+        <li><a href="#1-verify-all-processes-share-the-same-namespaces-by-default">1. Verify All Processes Share the Same Namespaces by Default</a></li>
+        <li><a href="#2-create-a-new-shell-with-new-namespaces-using-unshare">2. Create a New Shell with New Namespaces Using <code>unshare</code></a></li>
+        <li><a href="#3-test-isolation-examples">3. Test Isolation Examples</a></li>
+        <li><a href="#4-exit-new-namespace-shell">4. Exit New Namespace Shell</a></li>
+        <li><a href="#bonus-explore-namespaces-in-docker-containers">Bonus: Explore Namespaces in Docker Containers</a></li>
+        <li><a href="#summary">Summary</a></li>
+      </ul>
+    </li>
+    <li><a href="#introduction-to-cgroups-control-groups">Introduction to cgroups (Control Groups)</a>
+      <ul>
+        <li><a href="#how-cgroups-work">How cgroups Work</a></li>
+        <li><a href="#common-cgroups-controllers">Common cgroups Controllers</a></li>
+        <li><a href="#hands-on-lab-basic-cgroups-usage">Hands-On Lab: Basic cgroups Usage</a></li>
+        <li><a href="#1-check-if-cgroups-are-mounted">1. Check if cgroups are mounted</a></li>
+        <li><a href="#2-create-a-cgroup-and-limit-cpu">2. Create a cgroup and limit CPU</a></li>
+        <li><a href="#3-add-a-process-to-the-cgroup">3. Add a process to the cgroup</a></li>
+        <li><a href="#4-verify-the-limits">4. Verify the limits</a></li>
+      </ul>
+    </li>
+    <li><a href="#how-namespaces-and-cgroups-work-together">How Namespaces and cgroups Work Together</a></li>
+    <li><a href="#common-docker-resource-control-flags">Common Docker Resource Control Flags</a></li>
+    <li><a href="#cpu-limiting-examples">CPU Limiting Examples</a>
+      <ul>
+        <li><a href="#limit-container-to-use-05-cpu-cores">Limit container to use 0.5 CPU cores</a></li>
+        <li><a href="#set-cpu-shares-relative-weight">Set CPU shares (relative weight)</a></li>
+        <li><a href="#limit-cpu-usage-using-quota-and-period">Limit CPU usage using quota and period</a></li>
+        <li><a href="#limit-number-of-processes-pids">Limit Number of Processes (PIDs)</a></li>
+      </ul>
+    </li>
+    <li><a href="#summary-1">Summary</a></li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#summary-2">Summary</a></li>
+      </ul>
+    </li>
+    <li><a href="#docker-examples-running-processes-in-shared-namespaces">Docker Examples: Running Processes in Shared Namespaces</a></li>
+    <li><a href="#1-share-pid-namespace-between-containers">1. Share PID Namespace Between Containers</a></li>
+    <li><a href="#2-share-network-namespace-between-containers">2. Share Network Namespace Between Containers</a>
+      <ul>
+        <li><a href="#start-container1-normally">Start container1 normally</a></li>
+        <li><a href="#start-container2-sharing-network-namespace-of-net1">Start container2 sharing network namespace of net1</a></li>
+        <li><a href="#inside-net2-check-ip-address-should-be-same-as-net1">Inside net2, check IP address (should be same as net1)</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-share-ipc-namespace-between-containers">3. Share IPC Namespace Between Containers</a>
+      <ul>
+        <li><a href="#check-ipc-namespace-inode-inside-ipc2">Check IPC namespace inode inside ipc2</a></li>
+        <li><a href="#4-share-uts-namespace-between-containers">4. Share UTS Namespace Between Containers</a></li>
+        <li><a href="#change-hostname-in-uts1-container">Change hostname in uts1 container</a></li>
+        <li><a href="#check-hostname-in-uts2-container-should-be-shared-host">Check hostname in uts2 container (should be &ldquo;shared-host&rdquo;)</a></li>
+      </ul>
+    </li>
+    <li><a href="#5-share-mount-namespace-between-containers-experimental">5. Share Mount Namespace Between Containers (Experimental)</a></li>
+    <li><a href="#6-share-host-pid-namespace">6. Share Host PID Namespace</a>
+      <ul>
+        <li><a href="#now-ps-aux-inside-container-shows-all-host-processes">Now ps aux inside container shows all host processes</a></li>
+      </ul>
+    </li>
+    <li><a href="#tasks-to-do">Tasks to do</a></li>
+  </ul>
+</nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement" class=""><a itemprop="item" href="../../index.html"><span itemprop="name">Containers</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement" class=""><a itemprop="item" href="../../containers/index.html"><span itemprop="name">Docker</span></a><meta itemprop="position" content="2">&nbsp;>&nbsp;</li><li itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement" class=""><span itemprop="name">part 01</span><meta itemprop="position" content="3"></li>
+          </ol>
+          <div class="topbar-area topbar-area-end" data-area="end">
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../containers/index.html" title="Docker (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../containers/conatiner02/index.html" title="Part 02 (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+                  <div class="topbar-area topbar-area-more" data-area="more">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="R-main-overlay"></div>
+      <main id="R-body-inner" class="highlightable containers" tabindex="-1">
+        <div class="flex-block-wrapper">
+<article class="default">
+  <header class="headline">
+  </header>
+
+<h1 id="part-01">part 01</h1>
+
+<h2 id="topics"><strong>Topics</strong></h2>
+<h3 id="1-linux-namespaces">1. <strong>Linux Namespaces</strong></h3>
+<h3 id="2-linux-cgroups">2. <strong>Linux Cgroups</strong></h3>
+<h3 id="3-unshare">3. <strong>Unshare</strong></h3>
+<h3 id="4-chroot">4. <strong>chroot</strong></h3>
+<h3 id="introduction-what-are-linux-namespaces">Introduction: What Are Linux Namespaces?</h3>
+<p>By default, <strong>all processes on a Linux system share the same namespaces</strong> for things like process IDs, network, mounts, etc. This means:</p>
+<ul>
+<li>All processes see the same list of processes.</li>
+<li>All processes share the same network interfaces and IP addresses.</li>
+<li>All processes see the same filesystem mount points.</li>
+<li>All processes share the same hostname.</li>
+</ul>
+<hr>
+<h3 id="why-do-we-need-namespaces">Why Do We Need Namespaces?</h3>
+<p>Namespaces allow the Linux kernel to <strong>isolate and virtualize system resources</strong> so that a group of processes can have their own view of the system. This is key for:</p>
+<ul>
+<li>Containers (Docker, Kubernetes, OpenShift)</li>
+<li>Sandboxed environments</li>
+<li>Security isolation</li>
+</ul>
+<hr>
+<h3 id="how-to-create-new-namespaces">How to Create New Namespaces?</h3>
+<p>Linux provides the <code>unshare</code> command and APIs to create new namespaces. When a process is created with new namespaces, it gets its own isolated view of resources.</p>
+<p>Containers like Docker also create new namespaces automatically when they launch.</p>
+<hr>
+<h3 id="types-of-linux-namespaces-and-what-they-isolate">Types of Linux Namespaces and What They Isolate</h3>
+<table>
+  <thead>
+      <tr>
+          <th>Namespace Type</th>
+          <th>What It Isolates</th>
+          <th>Example of Isolation</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>PID namespace</strong></td>
+          <td>Process IDs</td>
+          <td>Separate process trees per container</td>
+      </tr>
+      <tr>
+          <td><strong>Mount namespace</strong></td>
+          <td>Filesystem mount points</td>
+          <td>Containers have separate filesystem views</td>
+      </tr>
+      <tr>
+          <td><strong>Network namespace</strong></td>
+          <td>Network devices, IPs, ports</td>
+          <td>Containers have their own network interfaces</td>
+      </tr>
+      <tr>
+          <td><strong>UTS namespace</strong></td>
+          <td>Hostname and domain name</td>
+          <td>Containers have separate hostnames</td>
+      </tr>
+      <tr>
+          <td><strong>IPC namespace</strong></td>
+          <td>Interprocess communication</td>
+          <td>Separate message queues and semaphores</td>
+      </tr>
+      <tr>
+          <td><strong>User namespace</strong></td>
+          <td>User and group IDs</td>
+          <td>Containers can remap users for security</td>
+      </tr>
+      <tr>
+          <td><strong>Cgroup namespace</strong></td>
+          <td>View of cgroups</td>
+          <td>Isolated view of resource groups</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="hands-on-lab">Hands-On Lab</h3>
+<h3 id="1-verify-all-processes-share-the-same-namespaces-by-default">1. Verify All Processes Share the Same Namespaces by Default</h3>
+<p>Run this on your current shell:</p>
+<pre><code>echo &quot;Current shell PID: $$&quot;
+ls -l /proc/$$/ns/
+</code></pre>
+<p>You will see namespaces like <code>pid</code>, <code>net</code>, <code>mnt</code>, <code>uts</code>, etc. All processes started normally share these namespaces.</p>
+<hr>
+<h3 id="2-create-a-new-shell-with-new-namespaces-using-unshare">2. Create a New Shell with New Namespaces Using <code>unshare</code></h3>
+<p>Run the following command to launch a new shell with new mount, UTS, IPC, network, and PID namespaces:</p>
+<pre><code>sudo unshare --mount --uts --ipc --net --pid --fork /bin/bash
+</code></pre>
+<p>This starts a bash shell inside the new namespaces.<br>
+Inside this new shell:</p>
+<ul>
+<li>The <code>hostname</code> is separate.</li>
+<li>Process IDs start fresh (your bash is PID 1).</li>
+<li>Mounted filesystems are isolated.</li>
+<li>Network interfaces are isolated.</li>
+</ul>
+<hr>
+<h3 id="3-test-isolation-examples">3. Test Isolation Examples</h3>
+<ul>
+<li>
+<p>Change hostname:</p>
+<pre><code>hostname my-container
+echo &quot;New hostname: $(hostname)&quot;
+</code></pre>
+</li>
+<li>
+<p>Check process list (bash should be PID 1):</p>
+<pre><code>ps aux
+</code></pre>
+</li>
+<li>
+<p>Mount a new filesystem:</p>
+<pre><code>mount -t tmpfs tmpfs /mnt
+mount | grep /mnt
+</code></pre>
+</li>
+<li>
+<p>Check network interfaces:</p>
+<pre><code>ip addr
+</code></pre>
+</li>
+</ul>
+<p>Open another terminal and check the hostname, mounts, and processes there — they remain unaffected.</p>
+<hr>
+<h3 id="4-exit-new-namespace-shell">4. Exit New Namespace Shell</h3>
+<pre><code>exit
+</code></pre>
+<hr>
+<h3 id="bonus-explore-namespaces-in-docker-containers">Bonus: Explore Namespaces in Docker Containers</h3>
+<p>Docker automatically creates new namespaces for each container.</p>
+<p>Start a container:</p>
+<pre><code>docker run -it --rm alpine sh
+</code></pre>
+<p>Inside container:</p>
+<pre><code>hostname
+ps aux
+ls -l /proc/self/ns/
+</code></pre>
+<p>On host, find the container’s PID:</p>
+<pre><code>docker inspect --format '{{.State.Pid}}' &lt;container_id_or_name&gt;
+ls -l /proc/&lt;container_pid&gt;/ns/
+</code></pre>
+<hr>
+<h3 id="summary">Summary</h3>
+<ul>
+<li>Without <code>unshare</code> or container runtimes, all processes share the same namespaces.</li>
+<li>Namespaces allow resource and process isolation needed by containers.</li>
+<li><code>unshare</code> can be used to experiment with namespaces manually.</li>
+<li>Containers (Docker, Kubernetes) use namespaces to create isolated environments for workloads.</li>
+</ul>
+<hr>
+<h2 id="introduction-to-cgroups-control-groups">Introduction to cgroups (Control Groups)</h2>
+<p>While namespaces isolate <em>what</em> a process sees (e.g., process list, network), <strong>cgroups control how much resources a process or group of processes can use</strong>.</p>
+<p>cgroups allow you to limit, prioritize, and account for CPU, memory, disk I/O, and network bandwidth for processes.</p>
+<hr>
+<h3 id="how-cgroups-work">How cgroups Work</h3>
+<ul>
+<li>You create cgroups (control groups) and assign processes to them.</li>
+<li>You can configure limits, such as max CPU shares or memory limits, per cgroup.</li>
+<li>The Linux kernel enforces these limits, ensuring processes don’t exceed allocated resources.</li>
+</ul>
+<hr>
+<h3 id="common-cgroups-controllers">Common cgroups Controllers</h3>
+<table>
+  <thead>
+      <tr>
+          <th>Controller</th>
+          <th>Resource Controlled</th>
+          <th>Description</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>cpu</code></td>
+          <td>CPU scheduling and usage</td>
+          <td>Limits CPU time for processes</td>
+      </tr>
+      <tr>
+          <td><code>memory</code></td>
+          <td>Memory usage</td>
+          <td>Limits RAM usage, triggers OOM</td>
+      </tr>
+      <tr>
+          <td><code>blkio</code></td>
+          <td>Block device I/O</td>
+          <td>Controls disk read/write bandwidth</td>
+      </tr>
+      <tr>
+          <td><code>net_cls</code></td>
+          <td>Network traffic classification</td>
+          <td>Controls and tags network traffic</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="hands-on-lab-basic-cgroups-usage">Hands-On Lab: Basic cgroups Usage</h3>
+<h3 id="1-check-if-cgroups-are-mounted">1. Check if cgroups are mounted</h3>
+<pre><code>mount | grep cgroup
+</code></pre>
+<p>You should see various cgroup controllers mounted, e.g., <code>/sys/fs/cgroup/cpu</code>, <code>/sys/fs/cgroup/memory</code>, etc.</p>
+<hr>
+<h3 id="2-create-a-cgroup-and-limit-cpu">2. Create a cgroup and limit CPU</h3>
+<pre><code>sudo mkdir /sys/fs/cgroup/cpu/mygroup
+echo 50000 | sudo tee /sys/fs/cgroup/cpu/mygroup/cpu.cfs_quota_us
+echo 100000 | sudo tee /sys/fs/cgroup/cpu/mygroup/cpu.cfs_period_us
+</code></pre>
+<p>This limits the cgroup to 50% of a CPU core.</p>
+<hr>
+<h3 id="3-add-a-process-to-the-cgroup">3. Add a process to the cgroup</h3>
+<p>Get the PID of a process (e.g., a bash shell):</p>
+<pre><code>pidof bash
+</code></pre>
+<p>Add the PID to the cgroup:</p>
+<pre><code>echo &lt;pid&gt; | sudo tee /sys/fs/cgroup/cpu/mygroup/cgroup.procs
+</code></pre>
+<hr>
+<h3 id="4-verify-the-limits">4. Verify the limits</h3>
+<p>Check the cgroup usage and limits in <code>/sys/fs/cgroup/cpu/mygroup</code>.</p>
+<hr>
+<h2 id="how-namespaces-and-cgroups-work-together">How Namespaces and cgroups Work Together</h2>
+<ul>
+<li><strong>Namespaces</strong> isolate <em>what processes see</em> (virtualization of system resources).</li>
+<li><strong>cgroups</strong> limit <em>how much resources</em> those processes can consume.</li>
+</ul>
+<p>Together, they form the backbone of container runtime isolation and resource management.</p>
+<hr>
+<h2 id="common-docker-resource-control-flags">Common Docker Resource Control Flags</h2>
+<table>
+  <thead>
+      <tr>
+          <th>Resource</th>
+          <th>Docker Flag</th>
+          <th>Description</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>CPU</td>
+          <td><code>--cpus</code>, <code>--cpu-shares</code>, <code>--cpu-quota</code>, <code>--cpu-period</code></td>
+          <td>Limit CPU usage</td>
+      </tr>
+      <tr>
+          <td>Memory</td>
+          <td><code>--memory</code>, <code>--memory-swap</code></td>
+          <td>Limit container memory usage</td>
+      </tr>
+      <tr>
+          <td>Block I/O</td>
+          <td><code>--device-read-bps</code>, <code>--device-write-bps</code></td>
+          <td>Limit disk read/write bandwidth</td>
+      </tr>
+      <tr>
+          <td>PIDs</td>
+          <td><code>--pids-limit</code></td>
+          <td>Limit number of processes in container</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="cpu-limiting-examples">CPU Limiting Examples</h2>
+<h3 id="limit-container-to-use-05-cpu-cores">Limit container to use 0.5 CPU cores</h3>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker run --rm -it --cpus<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;0.5&#34;</span> ubuntu bash</span></span></code></pre></div>
+<h3 id="set-cpu-shares-relative-weight">Set CPU shares (relative weight)</h3>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>docker run --rm -it --cpu-shares<span style="color:#f92672">=</span><span style="color:#ae81ff">512</span> ubuntu bash</span></span></code></pre></div>
+<h3 id="limit-cpu-usage-using-quota-and-period">Limit CPU usage using quota and period</h3>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Limit to 50% of one CPU:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>docker run --rm -it --cpu-quota<span style="color:#f92672">=</span><span style="color:#ae81ff">50000</span> --cpu-period<span style="color:#f92672">=</span><span style="color:#ae81ff">100000</span> ubuntu bash</span></span></code></pre></div>
+<h3 id="limit-number-of-processes-pids">Limit Number of Processes (PIDs)</h3>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>docker run --rm -it --pids-limit<span style="color:#f92672">=</span><span style="color:#ae81ff">50</span> ubuntu bash</span></span></code></pre></div>
+<h2 id="summary-1">Summary</h2>
+<ul>
+<li>Namespaces provide resource isolation.</li>
+<li>cgroups provide resource control.</li>
+<li>Containers like Docker and Kubernetes use both heavily to provide secure, isolated, and resource-controlled environments.</li>
+</ul>
+<h1 id="chroot-vs-unshare">chroot vs unshare</h1>
+<table>
+  <thead>
+      <tr>
+          <th>Aspect</th>
+          <th><code>chroot</code></th>
+          <th><code>unshare</code></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Purpose</strong></td>
+          <td>Change the root directory (<code>/</code>) for a process to isolate filesystem view.</td>
+          <td>Create new namespaces to isolate various resources (PID, network, mount, etc.).</td>
+      </tr>
+      <tr>
+          <td><strong>Isolation type</strong></td>
+          <td>Filesystem isolation only.</td>
+          <td>Can isolate multiple resources: PID, network, mount, UTS, IPC, user, etc.</td>
+      </tr>
+      <tr>
+          <td><strong>Security</strong></td>
+          <td>Limited; processes can escape <code>chroot</code> if privileged.</td>
+          <td>Much stronger isolation; used for containers and sandboxing.</td>
+      </tr>
+      <tr>
+          <td><strong>Usage</strong></td>
+          <td>Run a command with a different root filesystem.</td>
+          <td>Run a command with new kernel namespaces.</td>
+      </tr>
+      <tr>
+          <td><strong>Example</strong></td>
+          <td><code>chroot /new/root /bin/bash</code></td>
+          <td><code>unshare --mount --pid --net /bin/bash</code></td>
+      </tr>
+      <tr>
+          <td><strong>Scope</strong></td>
+          <td>Filesystem namespace only.</td>
+          <td>Multiple namespaces, depending on options.</td>
+      </tr>
+      <tr>
+          <td><strong>Container use</strong></td>
+          <td>Sometimes used historically for jail-like environments, but insufficient alone.</td>
+          <td>Core kernel primitive for containers and sandboxing.</td>
+      </tr>
+      <tr>
+          <td><strong>Privilege</strong></td>
+          <td>Usually requires root.</td>
+          <td>Usually requires root for some namespaces (e.g., network), but user namespaces allow unprivileged use.</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h3 id="summary-2">Summary</h3>
+<ul>
+<li><code>chroot</code> changes <strong>only the filesystem root</strong> for a process.</li>
+<li><code>unshare</code> creates <strong>new namespaces</strong>, providing isolation for many system resources, not just filesystem.</li>
+<li><code>unshare</code> is much more powerful and is the basis for modern container runtimes.</li>
+<li><code>chroot</code> can be part of isolation but is often not secure enough alone.</li>
+</ul>
+<h2 id="docker-examples-running-processes-in-shared-namespaces">Docker Examples: Running Processes in Shared Namespaces</h2>
+<hr>
+<h2 id="1-share-pid-namespace-between-containers">1. Share PID Namespace Between Containers</h2>
+<p>Allows containers to see and interact with each other&rsquo;s processes.</p>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Start a container in detached mode</span>
+</span></span><span style="display:flex;"><span>docker run -dit --name container1 ubuntu sleep <span style="color:#ae81ff">1000</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Start another container sharing PID namespace with container1</span>
+</span></span><span style="display:flex;"><span>docker run -dit --name container2 --pid<span style="color:#f92672">=</span>container:container1 ubuntu sleep <span style="color:#ae81ff">1000</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Exec into container2 and see processes (should see container1&#39;s processes too)</span>
+</span></span><span style="display:flex;"><span>docker exec -it container2 bash
+</span></span><span style="display:flex;"><span>ps aux</span></span></code></pre></div>
+<h2 id="2-share-network-namespace-between-containers">2. Share Network Namespace Between Containers</h2>
+<h3 id="start-container1-normally">Start container1 normally</h3>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>docker run -dit --name net1 ubuntu sleep <span style="color:#ae81ff">1000</span></span></span></code></pre></div>
+<h3 id="start-container2-sharing-network-namespace-of-net1">Start container2 sharing network namespace of net1</h3>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>docker run -dit --name net2 --net<span style="color:#f92672">=</span>container:net1 ubuntu sleep <span style="color:#ae81ff">1000</span></span></span></code></pre></div>
+<h3 id="inside-net2-check-ip-address-should-be-same-as-net1">Inside net2, check IP address (should be same as net1)</h3>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>docker exec -it net2 ip addr</span></span></code></pre></div>
+<h2 id="3-share-ipc-namespace-between-containers">3. Share IPC Namespace Between Containers</h2>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>docker run -dit --name ipc1 ubuntu sleep <span style="color:#ae81ff">1000</span>
+</span></span><span style="display:flex;"><span>docker run -dit --name ipc2 --ipc<span style="color:#f92672">=</span>container:ipc1 ubuntu sleep <span style="color:#ae81ff">1000</span></span></span></code></pre></div>
+<h3 id="check-ipc-namespace-inode-inside-ipc2">Check IPC namespace inode inside ipc2</h3>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>docker exec ipc2 ls -l /proc/self/ns/ipc</span></span></code></pre></div>
+<h3 id="4-share-uts-namespace-between-containers">4. Share UTS Namespace Between Containers</h3>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>docker run -dit --name uts1 ubuntu sleep <span style="color:#ae81ff">1000</span>
+</span></span><span style="display:flex;"><span>docker run -dit --name uts2 --uts<span style="color:#f92672">=</span>container:uts1 ubuntu sleep <span style="color:#ae81ff">1000</span></span></span></code></pre></div>
+<h3 id="change-hostname-in-uts1-container">Change hostname in uts1 container</h3>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>docker exec uts1 hostname shared-host</span></span></code></pre></div>
+<h3 id="check-hostname-in-uts2-container-should-be-shared-host">Check hostname in uts2 container (should be &ldquo;shared-host&rdquo;)</h3>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>docker exec uts2 hostname</span></span></code></pre></div>
+<h2 id="5-share-mount-namespace-between-containers-experimental">5. Share Mount Namespace Between Containers (Experimental)</h2>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>docker run -dit --name mount1 ubuntu sleep <span style="color:#ae81ff">1000</span>
+</span></span><span style="display:flex;"><span>docker run -dit --name mount2 --mount<span style="color:#f92672">=</span>container:mount1 ubuntu sleep <span style="color:#ae81ff">1000</span></span></span></code></pre></div>
+<h2 id="6-share-host-pid-namespace">6. Share Host PID Namespace</h2>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>docker run -it --pid<span style="color:#f92672">=</span>host ubuntu bash</span></span></code></pre></div>
+<h3 id="now-ps-aux-inside-container-shows-all-host-processes">Now ps aux inside container shows all host processes</h3>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>ps aux</span></span></code></pre></div>
+<h2 id="tasks-to-do">Tasks to do</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Install docker</li>
+</ul>
+
+  <footer class="footline">
+  </footer>
+</article>
+        </div>
+      </main>
+    </div>
+    <aside id="R-sidebar" class="default-animation">
+      <div id="R-header-topbar" class="default-animation"></div>
+      <div id="R-header-wrapper" class="default-animation">
+        <div id="R-header" class="default-animation">
+          <a id="R-logo" class="R-default" href="../../index.html">
+            <div class="logo-title">Learn containers</div>
+          </a>
+        </div>
+        <search><form action="../../search/index.html" method="get">
+          <div class="searchbox default-animation">
+            <button class="search-detail" type="submit" title="Search (CTRL+ALT+f)"><i class="fas fa-search"></i></button>
+            <label class="a11y-only" for="R-search-by">Search</label>
+            <input data-search-input id="R-search-by" name="search-by" class="search-by" type="search" placeholder="Search...">
+            <button class="search-clear" type="button" data-search-clear="" title="Clear search"><i class="fas fa-times" title="Clear search"></i></button>
+          </div>
+        </form></search>
+      </div>
+      <div id="R-homelinks" class="default-animation homelinks">
+        <div class="R-menu-divider default-animation">
+          <hr class="padding">
+        </div>
+        <div class="R-sidebarmenu R-shortcutmenu-homelinks">
+          <ul class="space collapsible-menu">
+            <li class="" data-nav-id="/index.html"><a class="padding" href="../../index.html"><i class="fa-fw fas fa-home"></i> Home</a></li>
+          </ul>
+        </div>
+        <div class="R-menu-divider default-animation">
+          <hr class="padding">
+        </div>
+        <div class="R-sidebarmenu R-shortcutmenu-headercontrols">
+          <ul class="">
+          </ul>
+        </div>
+        <div class="R-menu-divider default-animation">
+          <hr class="padding">
+        </div>
+      </div>
+      <div id="R-content-wrapper" class="highlightable">
+        <div class="R-sidebarmenu R-shortcutmenu-main">
+          <ul class="enlarge morespace collapsible-menu">
+            <li class="parent " data-nav-id="/containers/index.html"><a class="padding" href="../../containers/index.html">Docker</a><ul id="R-subsections-98e55644e7defe4a283b28e510b18cf5" class="collapsible-menu">
+            <li class="active " data-nav-id="/containers/container01/index.html"><a class="padding" href="../../containers/container01/index.html">part 01</a></li>
+            <li class="" data-nav-id="/containers/conatiner02/index.html"><a class="padding" href="../../containers/conatiner02/index.html">Part 02</a></li>
+            <li class="" data-nav-id="/containers/container03/index.html"><a class="padding" href="../../containers/container03/index.html">Part 03</a></li>
+            <li class="" data-nav-id="/containers/container04/index.html"><a class="padding" href="../../containers/container04/index.html">Part 04</a></li></ul></li>
+          </ul>
+        </div>
+        <div class="R-sidebarmenu R-shortcutmenu-shortcuts">
+          <ul class="space collapsible-menu">
+          </ul>
+        </div>
+        <div id="R-footer-margin"></div>
+        <div class="R-menu-divider default-animation">
+          <hr class="padding">
+        </div>
+        <div class="R-sidebarmenu R-shortcutmenu-footercontrols">
+          <ul class="">
+          </ul>
+        </div>
+<div id="R-footer"><p>Built with <a href="https://github.com/McShelby/hugo-theme-relearn" title="love"><i class="fas fa-heart"></i></a> by <a href="https://gohugo.io/">Hugo</a></p></div>
+      </div>
+    </aside>
+    <script src="../../containers/js/clipboard/clipboard.min.js?1757149302" defer></script>
+    <script src="../../containers/js/perfect-scrollbar/perfect-scrollbar.min.js?1757149302" defer></script>
+    <script src="../../containers/js/theme.min.js?1757149302" defer></script>
+  </body>
+</html>
