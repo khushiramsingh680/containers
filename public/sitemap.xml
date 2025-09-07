@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://khushiramsingh680.github.io/containers/containers/container05/index.html</loc>
-  </url>
-  <url>
     <loc>https://khushiramsingh680.github.io/containers/index.html</loc>
   </url>
   <url>
@@ -19,7 +16,16 @@
     <loc>https://khushiramsingh680.github.io/containers/containers/container04/index.html</loc>
   </url>
   <url>
+    <loc>https://khushiramsingh680.github.io/containers/containers/container05/index.html</loc>
+  </url>
+  <url>
     <loc>https://khushiramsingh680.github.io/containers/containers/container06-/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/containers/containers/project01.md/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/containers/containers/projects/index.html</loc>
   </url>
   <url>
     <loc>https://khushiramsingh680.github.io/containers/categories/index.html</loc>

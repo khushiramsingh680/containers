@@ -6,45 +6,45 @@
     <meta name="generator" content="Hugo 0.139.3">
     <meta name="generator" content="Relearn 8.0.0+9803d5122ebb3276acea823f476e9eb44f607862">
     <meta name="description" content="Docker Security Docker security is about protecting containers, images, the Docker daemon, host system, and networks from vulnerabilities or misuse. It requires best practices at all layers.
-1. Image Security Use official/trusted images only. Keep images small &amp; minimal (Alpine, distroless). Scan images for vulnerabilities: docker scan myimage:latest Enable Docker Content Trust (DCT) to sign &amp; verify images: export DOCKER_CONTENT_TRUST=1 2. Container Security Run as non-root user: USER 1001 (in Dockerfile) Avoid –privileged containers (full host access). Use read-only filesystem: docker run –read-only nginx Limit resources (cgroups): docker run -m 512m –cpus=“1.0” nginx Drop capabilities: docker run –cap-drop=ALL –cap-add=NET_BIND_SERVICE nginx 3. Docker Daemon Security Prefer rootless mode for Docker. Protect /var/run/docker.sock (limit access). Use TLS for Docker API: dockerd –tlsverify –tlscacert=ca.pem –tlscert=server-cert.pem –tlskey=server-key.pem -H=0.0.0.0:2376 4. Network Security Use user-defined networks for isolation. Encrypt overlay networks for multi-host. Restrict exposed ports (-p flag). Apply firewall rules (iptables, ufw). 5. Host Security Keep OS &amp; Docker updated. Enable AppArmor or SELinux. Restrict root access on host. For strong isolation → run containers inside VMs. 6. Security Tools Docker Bench for Security – Audits configs: docker run -it –net host –pid host –cap-add audit_control -v /var/lib:/var/lib -v /var/run/docker.sock:/var/run/docker.sock -v /usr/lib/systemd:/usr/lib/systemd -v /etc:/etc docker/docker-bench-security Trivy / Clair / Anchore – Image scanning. Falco – Runtime monitoring. 7. Seccomp Profiles Restrict Linux syscalls with seccomp. Example: docker run –security-opt seccomp=/path/to/profile.json nginx 8. Rootless Docker Run daemon &amp; containers without root → reduces attack surface. Install: curl -fsSL https://get.docker.com/rootless | sh 9. Best Practices (Quick Checklist ✅) Use minimal, signed images Run containers as non-root Drop privileges &amp; capabilities Use TLS for API Patch host &amp; Docker regularly Scan images before use Monitor containers at runtime">
+1. Image Security Use official/trusted images only. Keep images small &amp; minimal (Alpine, distroless). Scan images for vulnerabilities: docker scan myimage:latest Enable Docker Content Trust (DCT) to sign &amp; verify images: export DOCKER_CONTENT_TRUST=1 2. Container Security Run as non-root user: USER 1001 (in Dockerfile) Avoid –privileged containers (full host access). Use read-only filesystem: docker run –read-only nginx Limit resources (cgroups): docker run -m 512m –cpus=“1.0” nginx Drop capabilities: docker run –cap-drop=ALL –cap-add=NET_BIND_SERVICE nginx 3. Docker Daemon Security Prefer rootless mode for Docker. Protect /var/run/docker.sock (limit access). Use TLS for Docker API: dockerd –tlsverify –tlscacert=ca.pem –tlscert=server-cert.pem –tlskey=server-key.pem -H=0.0.0.0:2376 4. Network Security Use user-defined networks for isolation. Encrypt overlay networks for multi-host. Restrict exposed ports (-p flag). Apply firewall rules (iptables, ufw). 5. Host Security Keep OS &amp; Docker updated. Enable AppArmor or SELinux. Restrict root access on host. For strong isolation → run containers inside VMs. 6. Security Tools Docker Bench for Security – Audits configs: docker run -it –net host –pid host –cap-add audit_control -v /var/lib:/var/lib -v /var/run/docker.sock:/var/run/docker.sock -v /usr/lib/systemd:/usr/lib/systemd -v /etc:/etc docker/docker-bench-security Trivy / Clair / Anchore – Image scanning. Falco – Runtime monitoring. 7. Seccomp Profiles Restrict Linux syscalls with seccomp. Example: docker run –security-opt seccomp=/path/to/profile.json nginx 8. Rootless Docker Run daemon &amp; containers without root → reduces attack surface. Install: curl -fsSL https://get.docker.com/rootless | sh 9. Best Practices (Quick Checklist ✅) Use minimal, signed images Run containers as non-root Drop privileges &amp; capabilities Use TLS for API Patch host &amp; Docker regularly Scan images before use Monitor containers at runtime Creating a Container with Full Host Access ⚠️ Warning: This setup gives the container root-level access to the host. Use only on safe environments or lab machines. Misuse can compromise the host system.">
     <meta name="author" content="">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Contatiner Security :: Learn containers">
+    <meta name="twitter:title" content="Part 06 :: Learn containers">
     <meta name="twitter:description" content="Docker Security Docker security is about protecting containers, images, the Docker daemon, host system, and networks from vulnerabilities or misuse. It requires best practices at all layers.
-1. Image Security Use official/trusted images only. Keep images small &amp; minimal (Alpine, distroless). Scan images for vulnerabilities: docker scan myimage:latest Enable Docker Content Trust (DCT) to sign &amp; verify images: export DOCKER_CONTENT_TRUST=1 2. Container Security Run as non-root user: USER 1001 (in Dockerfile) Avoid –privileged containers (full host access). Use read-only filesystem: docker run –read-only nginx Limit resources (cgroups): docker run -m 512m –cpus=“1.0” nginx Drop capabilities: docker run –cap-drop=ALL –cap-add=NET_BIND_SERVICE nginx 3. Docker Daemon Security Prefer rootless mode for Docker. Protect /var/run/docker.sock (limit access). Use TLS for Docker API: dockerd –tlsverify –tlscacert=ca.pem –tlscert=server-cert.pem –tlskey=server-key.pem -H=0.0.0.0:2376 4. Network Security Use user-defined networks for isolation. Encrypt overlay networks for multi-host. Restrict exposed ports (-p flag). Apply firewall rules (iptables, ufw). 5. Host Security Keep OS &amp; Docker updated. Enable AppArmor or SELinux. Restrict root access on host. For strong isolation → run containers inside VMs. 6. Security Tools Docker Bench for Security – Audits configs: docker run -it –net host –pid host –cap-add audit_control -v /var/lib:/var/lib -v /var/run/docker.sock:/var/run/docker.sock -v /usr/lib/systemd:/usr/lib/systemd -v /etc:/etc docker/docker-bench-security Trivy / Clair / Anchore – Image scanning. Falco – Runtime monitoring. 7. Seccomp Profiles Restrict Linux syscalls with seccomp. Example: docker run –security-opt seccomp=/path/to/profile.json nginx 8. Rootless Docker Run daemon &amp; containers without root → reduces attack surface. Install: curl -fsSL https://get.docker.com/rootless | sh 9. Best Practices (Quick Checklist ✅) Use minimal, signed images Run containers as non-root Drop privileges &amp; capabilities Use TLS for API Patch host &amp; Docker regularly Scan images before use Monitor containers at runtime">
+1. Image Security Use official/trusted images only. Keep images small &amp; minimal (Alpine, distroless). Scan images for vulnerabilities: docker scan myimage:latest Enable Docker Content Trust (DCT) to sign &amp; verify images: export DOCKER_CONTENT_TRUST=1 2. Container Security Run as non-root user: USER 1001 (in Dockerfile) Avoid –privileged containers (full host access). Use read-only filesystem: docker run –read-only nginx Limit resources (cgroups): docker run -m 512m –cpus=“1.0” nginx Drop capabilities: docker run –cap-drop=ALL –cap-add=NET_BIND_SERVICE nginx 3. Docker Daemon Security Prefer rootless mode for Docker. Protect /var/run/docker.sock (limit access). Use TLS for Docker API: dockerd –tlsverify –tlscacert=ca.pem –tlscert=server-cert.pem –tlskey=server-key.pem -H=0.0.0.0:2376 4. Network Security Use user-defined networks for isolation. Encrypt overlay networks for multi-host. Restrict exposed ports (-p flag). Apply firewall rules (iptables, ufw). 5. Host Security Keep OS &amp; Docker updated. Enable AppArmor or SELinux. Restrict root access on host. For strong isolation → run containers inside VMs. 6. Security Tools Docker Bench for Security – Audits configs: docker run -it –net host –pid host –cap-add audit_control -v /var/lib:/var/lib -v /var/run/docker.sock:/var/run/docker.sock -v /usr/lib/systemd:/usr/lib/systemd -v /etc:/etc docker/docker-bench-security Trivy / Clair / Anchore – Image scanning. Falco – Runtime monitoring. 7. Seccomp Profiles Restrict Linux syscalls with seccomp. Example: docker run –security-opt seccomp=/path/to/profile.json nginx 8. Rootless Docker Run daemon &amp; containers without root → reduces attack surface. Install: curl -fsSL https://get.docker.com/rootless | sh 9. Best Practices (Quick Checklist ✅) Use minimal, signed images Run containers as non-root Drop privileges &amp; capabilities Use TLS for API Patch host &amp; Docker regularly Scan images before use Monitor containers at runtime Creating a Container with Full Host Access ⚠️ Warning: This setup gives the container root-level access to the host. Use only on safe environments or lab machines. Misuse can compromise the host system.">
     <meta property="og:url" content="https://khushiramsingh680.github.io/containers/containers/container06-/index.html">
     <meta property="og:site_name" content="Learn containers">
-    <meta property="og:title" content="Contatiner Security :: Learn containers">
+    <meta property="og:title" content="Part 06 :: Learn containers">
     <meta property="og:description" content="Docker Security Docker security is about protecting containers, images, the Docker daemon, host system, and networks from vulnerabilities or misuse. It requires best practices at all layers.
-1. Image Security Use official/trusted images only. Keep images small &amp; minimal (Alpine, distroless). Scan images for vulnerabilities: docker scan myimage:latest Enable Docker Content Trust (DCT) to sign &amp; verify images: export DOCKER_CONTENT_TRUST=1 2. Container Security Run as non-root user: USER 1001 (in Dockerfile) Avoid –privileged containers (full host access). Use read-only filesystem: docker run –read-only nginx Limit resources (cgroups): docker run -m 512m –cpus=“1.0” nginx Drop capabilities: docker run –cap-drop=ALL –cap-add=NET_BIND_SERVICE nginx 3. Docker Daemon Security Prefer rootless mode for Docker. Protect /var/run/docker.sock (limit access). Use TLS for Docker API: dockerd –tlsverify –tlscacert=ca.pem –tlscert=server-cert.pem –tlskey=server-key.pem -H=0.0.0.0:2376 4. Network Security Use user-defined networks for isolation. Encrypt overlay networks for multi-host. Restrict exposed ports (-p flag). Apply firewall rules (iptables, ufw). 5. Host Security Keep OS &amp; Docker updated. Enable AppArmor or SELinux. Restrict root access on host. For strong isolation → run containers inside VMs. 6. Security Tools Docker Bench for Security – Audits configs: docker run -it –net host –pid host –cap-add audit_control -v /var/lib:/var/lib -v /var/run/docker.sock:/var/run/docker.sock -v /usr/lib/systemd:/usr/lib/systemd -v /etc:/etc docker/docker-bench-security Trivy / Clair / Anchore – Image scanning. Falco – Runtime monitoring. 7. Seccomp Profiles Restrict Linux syscalls with seccomp. Example: docker run –security-opt seccomp=/path/to/profile.json nginx 8. Rootless Docker Run daemon &amp; containers without root → reduces attack surface. Install: curl -fsSL https://get.docker.com/rootless | sh 9. Best Practices (Quick Checklist ✅) Use minimal, signed images Run containers as non-root Drop privileges &amp; capabilities Use TLS for API Patch host &amp; Docker regularly Scan images before use Monitor containers at runtime">
+1. Image Security Use official/trusted images only. Keep images small &amp; minimal (Alpine, distroless). Scan images for vulnerabilities: docker scan myimage:latest Enable Docker Content Trust (DCT) to sign &amp; verify images: export DOCKER_CONTENT_TRUST=1 2. Container Security Run as non-root user: USER 1001 (in Dockerfile) Avoid –privileged containers (full host access). Use read-only filesystem: docker run –read-only nginx Limit resources (cgroups): docker run -m 512m –cpus=“1.0” nginx Drop capabilities: docker run –cap-drop=ALL –cap-add=NET_BIND_SERVICE nginx 3. Docker Daemon Security Prefer rootless mode for Docker. Protect /var/run/docker.sock (limit access). Use TLS for Docker API: dockerd –tlsverify –tlscacert=ca.pem –tlscert=server-cert.pem –tlskey=server-key.pem -H=0.0.0.0:2376 4. Network Security Use user-defined networks for isolation. Encrypt overlay networks for multi-host. Restrict exposed ports (-p flag). Apply firewall rules (iptables, ufw). 5. Host Security Keep OS &amp; Docker updated. Enable AppArmor or SELinux. Restrict root access on host. For strong isolation → run containers inside VMs. 6. Security Tools Docker Bench for Security – Audits configs: docker run -it –net host –pid host –cap-add audit_control -v /var/lib:/var/lib -v /var/run/docker.sock:/var/run/docker.sock -v /usr/lib/systemd:/usr/lib/systemd -v /etc:/etc docker/docker-bench-security Trivy / Clair / Anchore – Image scanning. Falco – Runtime monitoring. 7. Seccomp Profiles Restrict Linux syscalls with seccomp. Example: docker run –security-opt seccomp=/path/to/profile.json nginx 8. Rootless Docker Run daemon &amp; containers without root → reduces attack surface. Install: curl -fsSL https://get.docker.com/rootless | sh 9. Best Practices (Quick Checklist ✅) Use minimal, signed images Run containers as non-root Drop privileges &amp; capabilities Use TLS for API Patch host &amp; Docker regularly Scan images before use Monitor containers at runtime Creating a Container with Full Host Access ⚠️ Warning: This setup gives the container root-level access to the host. Use only on safe environments or lab machines. Misuse can compromise the host system.">
     <meta property="og:locale" content="en_us">
     <meta property="og:type" content="article">
     <meta property="article:section" content="Docker">
-    <meta itemprop="name" content="Contatiner Security :: Learn containers">
+    <meta itemprop="name" content="Part 06 :: Learn containers">
     <meta itemprop="description" content="Docker Security Docker security is about protecting containers, images, the Docker daemon, host system, and networks from vulnerabilities or misuse. It requires best practices at all layers.
-1. Image Security Use official/trusted images only. Keep images small &amp; minimal (Alpine, distroless). Scan images for vulnerabilities: docker scan myimage:latest Enable Docker Content Trust (DCT) to sign &amp; verify images: export DOCKER_CONTENT_TRUST=1 2. Container Security Run as non-root user: USER 1001 (in Dockerfile) Avoid –privileged containers (full host access). Use read-only filesystem: docker run –read-only nginx Limit resources (cgroups): docker run -m 512m –cpus=“1.0” nginx Drop capabilities: docker run –cap-drop=ALL –cap-add=NET_BIND_SERVICE nginx 3. Docker Daemon Security Prefer rootless mode for Docker. Protect /var/run/docker.sock (limit access). Use TLS for Docker API: dockerd –tlsverify –tlscacert=ca.pem –tlscert=server-cert.pem –tlskey=server-key.pem -H=0.0.0.0:2376 4. Network Security Use user-defined networks for isolation. Encrypt overlay networks for multi-host. Restrict exposed ports (-p flag). Apply firewall rules (iptables, ufw). 5. Host Security Keep OS &amp; Docker updated. Enable AppArmor or SELinux. Restrict root access on host. For strong isolation → run containers inside VMs. 6. Security Tools Docker Bench for Security – Audits configs: docker run -it –net host –pid host –cap-add audit_control -v /var/lib:/var/lib -v /var/run/docker.sock:/var/run/docker.sock -v /usr/lib/systemd:/usr/lib/systemd -v /etc:/etc docker/docker-bench-security Trivy / Clair / Anchore – Image scanning. Falco – Runtime monitoring. 7. Seccomp Profiles Restrict Linux syscalls with seccomp. Example: docker run –security-opt seccomp=/path/to/profile.json nginx 8. Rootless Docker Run daemon &amp; containers without root → reduces attack surface. Install: curl -fsSL https://get.docker.com/rootless | sh 9. Best Practices (Quick Checklist ✅) Use minimal, signed images Run containers as non-root Drop privileges &amp; capabilities Use TLS for API Patch host &amp; Docker regularly Scan images before use Monitor containers at runtime">
-    <meta itemprop="wordCount" content="280">
-    <title>Contatiner Security :: Learn containers</title>
-    <link href="../../containers/css/auto-complete/auto-complete.min.css?1757150813" rel="stylesheet">
-    <script src="../../containers/js/auto-complete/auto-complete.min.js?1757150813" defer></script>
-    <script src="../../containers/js/search-lunr.min.js?1757150813" defer></script>
-    <script src="../../containers/js/search.min.js?1757150813" defer></script>
+1. Image Security Use official/trusted images only. Keep images small &amp; minimal (Alpine, distroless). Scan images for vulnerabilities: docker scan myimage:latest Enable Docker Content Trust (DCT) to sign &amp; verify images: export DOCKER_CONTENT_TRUST=1 2. Container Security Run as non-root user: USER 1001 (in Dockerfile) Avoid –privileged containers (full host access). Use read-only filesystem: docker run –read-only nginx Limit resources (cgroups): docker run -m 512m –cpus=“1.0” nginx Drop capabilities: docker run –cap-drop=ALL –cap-add=NET_BIND_SERVICE nginx 3. Docker Daemon Security Prefer rootless mode for Docker. Protect /var/run/docker.sock (limit access). Use TLS for Docker API: dockerd –tlsverify –tlscacert=ca.pem –tlscert=server-cert.pem –tlskey=server-key.pem -H=0.0.0.0:2376 4. Network Security Use user-defined networks for isolation. Encrypt overlay networks for multi-host. Restrict exposed ports (-p flag). Apply firewall rules (iptables, ufw). 5. Host Security Keep OS &amp; Docker updated. Enable AppArmor or SELinux. Restrict root access on host. For strong isolation → run containers inside VMs. 6. Security Tools Docker Bench for Security – Audits configs: docker run -it –net host –pid host –cap-add audit_control -v /var/lib:/var/lib -v /var/run/docker.sock:/var/run/docker.sock -v /usr/lib/systemd:/usr/lib/systemd -v /etc:/etc docker/docker-bench-security Trivy / Clair / Anchore – Image scanning. Falco – Runtime monitoring. 7. Seccomp Profiles Restrict Linux syscalls with seccomp. Example: docker run –security-opt seccomp=/path/to/profile.json nginx 8. Rootless Docker Run daemon &amp; containers without root → reduces attack surface. Install: curl -fsSL https://get.docker.com/rootless | sh 9. Best Practices (Quick Checklist ✅) Use minimal, signed images Run containers as non-root Drop privileges &amp; capabilities Use TLS for API Patch host &amp; Docker regularly Scan images before use Monitor containers at runtime Creating a Container with Full Host Access ⚠️ Warning: This setup gives the container root-level access to the host. Use only on safe environments or lab machines. Misuse can compromise the host system.">
+    <meta itemprop="wordCount" content="428">
+    <title>Part 06 :: Learn containers</title>
+    <link href="../../containers/css/auto-complete/auto-complete.min.css?1757239308" rel="stylesheet">
+    <script src="../../containers/js/auto-complete/auto-complete.min.js?1757239308" defer></script>
+    <script src="../../containers/js/search-lunr.min.js?1757239308" defer></script>
+    <script src="../../containers/js/search.min.js?1757239308" defer></script>
     <script>
       window.relearn = window.relearn || {};
-      window.relearn.index_js_url="../../searchindex.en.js?1757150813";
+      window.relearn.index_js_url="../../searchindex.en.js?1757239308";
     </script>
-    <script src="../../containers/js/lunr/lunr.min.js?1757150813" defer></script>
-    <script src="../../containers/js/lunr/lunr.stemmer.support.min.js?1757150813" defer></script>
-    <script src="../../containers/js/lunr/lunr.multi.min.js?1757150813" defer></script>
-    <script src="../../containers/js/lunr/lunr.en.min.js?1757150813" defer></script>
+    <script src="../../containers/js/lunr/lunr.min.js?1757239308" defer></script>
+    <script src="../../containers/js/lunr/lunr.stemmer.support.min.js?1757239308" defer></script>
+    <script src="../../containers/js/lunr/lunr.multi.min.js?1757239308" defer></script>
+    <script src="../../containers/js/lunr/lunr.en.min.js?1757239308" defer></script>
     <script>
       window.relearn = window.relearn || {};
       window.relearn.contentLangs=['en'];
     </script>
-    <link href="../../containers/fonts/fontawesome/css/fontawesome-all.min.css?1757150813" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../containers/fonts/fontawesome/css/fontawesome-all.min.css?1757150813" rel="stylesheet"></noscript>
-    <link href="../../containers/css/perfect-scrollbar/perfect-scrollbar.min.css?1757150813" rel="stylesheet">
-    <link href="../../css/theme.min.css?1757150813" rel="stylesheet">
-    <link href="../../css/format-html.min.css?1757150813" rel="stylesheet" id="R-format-style">
+    <link href="../../containers/fonts/fontawesome/css/fontawesome-all.min.css?1757239308" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../containers/fonts/fontawesome/css/fontawesome-all.min.css?1757239308" rel="stylesheet"></noscript>
+    <link href="../../containers/css/perfect-scrollbar/perfect-scrollbar.min.css?1757239308" rel="stylesheet">
+    <link href="../../css/theme.min.css?1757239308" rel="stylesheet">
+    <link href="../../css/format-html.min.css?1757239308" rel="stylesheet" id="R-format-style">
     <script>
       window.relearn = window.relearn || {};
       // configuration
@@ -124,17 +124,27 @@
     <li><a href="#8-rootless-docker">8. Rootless Docker</a></li>
     <li><a href="#9-best-practices-quick-checklist-">9. Best Practices (Quick Checklist ✅)</a></li>
   </ul>
+
+  <ul>
+    <li><a href="#1-using-docker-with---privileged">1. Using Docker with <code>--privileged</code></a>
+      <ul>
+        <li><a href="#inside-the-container">Inside the container:</a></li>
+      </ul>
+    </li>
+    <li><a href="#-creating-a-container-with-full-host-access-and-network-access"># Creating a Container with Full Host Access and Network Access</a></li>
+    <li><a href="#1-full-host-access-with-docker---privileged">1. Full Host Access with Docker <code>--privileged</code></a></li>
+  </ul>
 </nav>
                 </div>
               </div>
             </div>
           </div>
-          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement" class=""><a itemprop="item" href="../../index.html"><span itemprop="name">Containers</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement" class=""><a itemprop="item" href="../../containers/index.html"><span itemprop="name">Docker</span></a><meta itemprop="position" content="2">&nbsp;>&nbsp;</li><li itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement" class=""><span itemprop="name">Contatiner Security</span><meta itemprop="position" content="3"></li>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement" class=""><a itemprop="item" href="../../index.html"><span itemprop="name">Containers</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement" class=""><a itemprop="item" href="../../containers/index.html"><span itemprop="name">Docker</span></a><meta itemprop="position" content="2">&nbsp;>&nbsp;</li><li itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement" class=""><span itemprop="name">Part 06</span><meta itemprop="position" content="3"></li>
           </ol>
           <div class="topbar-area topbar-area-end" data-area="end">
-            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../containers/container04/index.html" title="Part 04 (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../containers/container05/index.html" title="Part 05 (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
             </div>
-            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><span class="topbar-control"><i class="fa-fw fas fa-chevron-right"></i></span>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../containers/project01.md" title="Project 01 (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
             </div>
             <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
               <div class="topbar-content">
@@ -154,7 +164,7 @@
   <header class="headline">
   </header>
 
-<h1 id="contatiner-security">Contatiner Security</h1>
+<h1 id="part-06">Part 06</h1>
 
 <h2 id="docker-security">Docker Security</h2>
 <p>Docker security is about protecting containers, images, the Docker daemon, host system, and networks from vulnerabilities or misuse. It requires best practices at all layers.</p>
@@ -242,6 +252,38 @@ curl -fsSL <a href="https://get.docker.com/rootless" rel="external" target="_bla
 <li>Monitor containers at runtime</li>
 </ul>
 <hr>
+<h1 id="creating-a-container-with-full-host-access">Creating a Container with Full Host Access</h1>
+<blockquote>
+<p>⚠️ <strong>Warning:</strong> This setup gives the container <strong>root-level access to the host</strong>. Use only on safe environments or lab machines. Misuse can compromise the host system.</p>
+</blockquote>
+<hr>
+<h2 id="1-using-docker-with---privileged">1. Using Docker with <code>--privileged</code></h2>
+<p>This gives the container almost full control over the host.</p>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker run -it --rm --privileged <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -v /:/host <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --network host <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  ubuntu:22.04 /bin/bash</span></span></code></pre></div>
+<h3 id="inside-the-container">Inside the container:</h3>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>ls /host       <span style="color:#75715e"># Browse all host files</span>
+</span></span><span style="display:flex;"><span>chroot /host   <span style="color:#75715e"># Switch to host filesystem (optional)</span></span></span></code></pre></div>
+<h2 id="-creating-a-container-with-full-host-access-and-network-access"># Creating a Container with Full Host Access and Network Access</h2>
+<blockquote>
+<p>⚠️ <strong>Warning:</strong> This setup gives the container <strong>root-level access to the host</strong>, including full network visibility. Use only on safe environments or lab machines. Misuse can compromise the host system.</p>
+</blockquote>
+<hr>
+<h2 id="1-full-host-access-with-docker---privileged">1. Full Host Access with Docker <code>--privileged</code></h2>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker run -it --rm --privileged <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -v /:/host <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --network host <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  ubuntu:22.04 /bin/bash</span></span></code></pre></div>
+<p>Docker bench</p>
+<ul>
+<li><a href="https://github.com/docker/docker-bench-security" rel="external" target="_blank">https://github.com/docker/docker-bench-security</a></li>
+</ul>
+<p>Aqua Security</p>
+<ul>
+<li><a href="https://github.com/aquasecurity/" rel="external" target="_blank">https://github.com/aquasecurity/</a></li>
+</ul>
 
   <footer class="footline">
   </footer>
@@ -290,12 +332,14 @@ curl -fsSL <a href="https://get.docker.com/rootless" rel="external" target="_bla
         <div class="R-sidebarmenu R-shortcutmenu-main">
           <ul class="enlarge morespace collapsible-menu">
             <li class="parent " data-nav-id="/containers/index.html"><a class="padding" href="../../containers/index.html">Docker</a><ul id="R-subsections-98e55644e7defe4a283b28e510b18cf5" class="collapsible-menu">
-            <li class="" data-nav-id="/containers/container05/index.html"><a class="padding" href="../../containers/container05/index.html">Container restart policies</a></li>
             <li class="" data-nav-id="/containers/container01/index.html"><a class="padding" href="../../containers/container01/index.html">part 01</a></li>
             <li class="" data-nav-id="/containers/conatiner02/index.html"><a class="padding" href="../../containers/conatiner02/index.html">Part 02</a></li>
             <li class="" data-nav-id="/containers/container03/index.html"><a class="padding" href="../../containers/container03/index.html">Part 03</a></li>
             <li class="" data-nav-id="/containers/container04/index.html"><a class="padding" href="../../containers/container04/index.html">Part 04</a></li>
-            <li class="active " data-nav-id="/containers/container06-/index.html"><a class="padding" href="../../containers/container06-/index.html">Contatiner Security</a></li></ul></li>
+            <li class="" data-nav-id="/containers/container05/index.html"><a class="padding" href="../../containers/container05/index.html">Part 05</a></li>
+            <li class="active " data-nav-id="/containers/container06-/index.html"><a class="padding" href="../../containers/container06-/index.html">Part 06</a></li>
+            <li class="" data-nav-id="/containers/project01.md/index.html"><a class="padding" href="../../containers/project01.md/index.html">Project 01</a></li>
+            <li class="" data-nav-id="/containers/projects/index.html"><a class="padding" href="../../containers/projects/index.html">Projects</a></li></ul></li>
           </ul>
         </div>
         <div class="R-sidebarmenu R-shortcutmenu-shortcuts">
@@ -313,8 +357,8 @@ curl -fsSL <a href="https://get.docker.com/rootless" rel="external" target="_bla
 <div id="R-footer"><p>Built with <a href="https://github.com/McShelby/hugo-theme-relearn" title="love"><i class="fas fa-heart"></i></a> by <a href="https://gohugo.io/">Hugo</a></p></div>
       </div>
     </aside>
-    <script src="../../containers/js/clipboard/clipboard.min.js?1757150813" defer></script>
-    <script src="../../containers/js/perfect-scrollbar/perfect-scrollbar.min.js?1757150813" defer></script>
-    <script src="../../containers/js/theme.min.js?1757150813" defer></script>
+    <script src="../../containers/js/clipboard/clipboard.min.js?1757239308" defer></script>
+    <script src="../../containers/js/perfect-scrollbar/perfect-scrollbar.min.js?1757239308" defer></script>
+    <script src="../../containers/js/theme.min.js?1757239308" defer></script>
   </body>
 </html>

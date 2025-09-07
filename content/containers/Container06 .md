@@ -1,5 +1,5 @@
 +++
-title = "Contatiner Security"
+title = "Part 06"
 weight = 11
 +++
 
@@ -92,3 +92,47 @@ Docker security is about protecting containers, images, the Docker daemon, host 
 - Monitor containers at runtime
 
 ---
+# Creating a Container with Full Host Access
+
+> ⚠️ **Warning:** This setup gives the container **root-level access to the host**. Use only on safe environments or lab machines. Misuse can compromise the host system.
+
+---
+
+## 1. Using Docker with `--privileged`
+
+This gives the container almost full control over the host.
+
+```bash
+docker run -it --rm --privileged \
+  -v /:/host \
+  --network host \
+  ubuntu:22.04 /bin/bash
+```
+### Inside the container:
+```sh
+ls /host       # Browse all host files
+chroot /host   # Switch to host filesystem (optional)
+```
+
+## # Creating a Container with Full Host Access and Network Access
+
+> ⚠️ **Warning:** This setup gives the container **root-level access to the host**, including full network visibility. Use only on safe environments or lab machines. Misuse can compromise the host system.
+
+---
+
+## 1. Full Host Access with Docker `--privileged`
+
+```bash
+docker run -it --rm --privileged \
+  -v /:/host \
+  --network host \
+  ubuntu:22.04 /bin/bash
+```
+
+
+
+Docker bench
+- https://github.com/docker/docker-bench-security
+
+Aqua Security 
+-  https://github.com/aquasecurity/
