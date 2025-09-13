@@ -66,15 +66,13 @@ Docker containers can be categorized based on their purpose and usage:
 - Examples:
   ```bash
   docker run --rm -it ubuntu bash
-```
+  ```
 
+## Docker Storage
 
-
-# Docker Storage
-
-Docker storage allows containers to store and share data beyond their ephemeral writable layer.  
-By default, container data is lost when the container is removed.  
-To persist or share data, Docker provides different storage mechanisms.
+- Docker storage allows containers to store and share data beyond their ephemeral writable layer.  
+- By default, container data is lost when the container is removed.  
+- To persist or share data, Docker provides different storage mechanisms.
 
 ---
 
@@ -95,7 +93,7 @@ To persist or share data, Docker provides different storage mechanisms.
   ```bash
   docker volume create mydata
   docker run -d -v mydata:/app/data nginx
-```
+  ```
 
 ### 1.3 Bind Mounts
 
@@ -107,14 +105,14 @@ To persist or share data, Docker provides different storage mechanisms.
 docker run -d -v /host/path:/container/path nginx
 ```
 
-# Docker Volumes
+### Docker Volumes
 
 Docker volumes provide a way to persist data outside of containers’ writable layers.  
 They are managed by Docker and are the preferred mechanism for data persistence.
 
 ---
 
-## 1. Why Use Volumes?
+### 1. Why Use Volumes?
 - Data persistence beyond container lifecycle
 - Sharing data between multiple containers
 - Easier backup and restore
@@ -157,7 +155,7 @@ They are managed by Docker and are the preferred mechanism for data persistence.
 
 ---
 
-## 4. Using Volumes with Containers
+### 4. Using Volumes with Containers
 - Mount a Volume  
   `docker run -d --name mycontainer -v myvolume:/data busybox`
 
@@ -169,7 +167,7 @@ They are managed by Docker and are the preferred mechanism for data persistence.
 
 ---
 
-## 5. Backup & Restore Volumes
+### 5. Backup & Restore Volumes
 - Backup a Volume  
   `docker run --rm -v myvolume:/data -v $(pwd):/backup busybox tar cvf /backup/backup.tar /data`
 
@@ -178,7 +176,7 @@ They are managed by Docker and are the preferred mechanism for data persistence.
 
 ---
 
-## 6. Volume Drivers
+### 6. Volume Drivers
 Docker supports different volume drivers, e.g.:
 - **local** (default, stores data on local filesystem)
 - **nfs** (store data on remote NFS server)
@@ -190,7 +188,7 @@ Example:
 
 ---
 
-## 7. Best Practices
+### 7. Best Practices
 - Use **named volumes** instead of anonymous volumes
 - Prefer **volumes** over bind mounts for portability
 - Use **tmpfs** for sensitive, ephemeral data
@@ -198,14 +196,14 @@ Example:
 - For production, consider **driver-based storage** (NFS, cloud)
 
 ---
-# Docker Networking
+## Docker Networking
 
-Docker networking allows containers to communicate with each other, the host system, and external networks.  
-It is essential for microservices and multi-container applications.
+- Docker networking allows containers to communicate with each other, the host system, and external networks.  
+- It is essential for microservices and multi-container applications.
 
 ---
 
-## 1. Default Networks
+### 1. Default Networks
 When Docker is installed, it creates these default networks:
 - **bridge** (default for standalone containers)
 - **host** (container shares host network stack)
@@ -219,7 +217,7 @@ Inspect a network:
 
 ---
 
-## 2. Types of Docker Networks
+### 2. Types of Docker Networks
 
 1. **Bridge Network** (default)
    - Containers get their own IP
@@ -266,7 +264,7 @@ Inspect a network:
 
 ---
 
-## 3. Common Networking Commands
+### 3. Common Networking Commands
 - List networks  
   `docker network ls`
 
@@ -287,7 +285,7 @@ Inspect a network:
 
 ---
 
-## 4. Port Mapping
+### 4. Port Mapping
 By default, containers in bridge networks are isolated from the host.  
 We use `-p` or `--publish` to map host ports.
 
@@ -297,7 +295,7 @@ We use `-p` or `--publish` to map host ports.
 
 ---
 
-## 5. DNS & Service Discovery
+### 5. DNS & Service Discovery
 - Docker provides built-in DNS for container name resolution.
 - Containers in the same user-defined network can resolve each other by name.
 - Example:  
@@ -305,7 +303,7 @@ We use `-p` or `--publish` to map host ports.
 
 ---
 
-## 6. Best Practices
+### 6. Best Practices
 - Use **user-defined bridge networks** for multi-container apps.
 - For multi-host deployments, use **overlay networks**.
 - Use **macvlan** when containers need to appear as separate physical devices.

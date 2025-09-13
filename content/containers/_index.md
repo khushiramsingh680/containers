@@ -3,6 +3,7 @@ title = "Docker"
 type = "home"
 +++
 
+-  [Please click Here to connect](https://jiomeetpro.jio.com/shortener?meetingId=6548552155&pwd=6gBTS)
 ## Docker – Table of Contents
 
 ## 1. Linux Kernel & Container Fundamentals

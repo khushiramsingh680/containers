@@ -31,28 +31,28 @@ Restarts container only if it exits with a non-zero exit code (error). Optionall
 Types of Restart Policies no (default)
 Container does not restart automatically. Example: docker run --restart=no nginxon-failure
 Restarts container only if it exits with a non-zero exit code (error). Optionally, you can limit retries (e.g., on-failure:5). Example: docker run --restart=on-failure:3 myappalways">
-    <meta itemprop="wordCount" content="1046">
+    <meta itemprop="wordCount" content="1031">
     <title>Part 05 :: Learn containers</title>
-    <link href="../../containers/css/auto-complete/auto-complete.min.css?1757239308" rel="stylesheet">
-    <script src="../../containers/js/auto-complete/auto-complete.min.js?1757239308" defer></script>
-    <script src="../../containers/js/search-lunr.min.js?1757239308" defer></script>
-    <script src="../../containers/js/search.min.js?1757239308" defer></script>
+    <link href="../../containers/css/auto-complete/auto-complete.min.css?1757773130" rel="stylesheet">
+    <script src="../../containers/js/auto-complete/auto-complete.min.js?1757773130" defer></script>
+    <script src="../../containers/js/search-lunr.min.js?1757773130" defer></script>
+    <script src="../../containers/js/search.min.js?1757773130" defer></script>
     <script>
       window.relearn = window.relearn || {};
-      window.relearn.index_js_url="../../searchindex.en.js?1757239308";
+      window.relearn.index_js_url="../../searchindex.en.js?1757773130";
     </script>
-    <script src="../../containers/js/lunr/lunr.min.js?1757239308" defer></script>
-    <script src="../../containers/js/lunr/lunr.stemmer.support.min.js?1757239308" defer></script>
-    <script src="../../containers/js/lunr/lunr.multi.min.js?1757239308" defer></script>
-    <script src="../../containers/js/lunr/lunr.en.min.js?1757239308" defer></script>
+    <script src="../../containers/js/lunr/lunr.min.js?1757773130" defer></script>
+    <script src="../../containers/js/lunr/lunr.stemmer.support.min.js?1757773130" defer></script>
+    <script src="../../containers/js/lunr/lunr.multi.min.js?1757773130" defer></script>
+    <script src="../../containers/js/lunr/lunr.en.min.js?1757773130" defer></script>
     <script>
       window.relearn = window.relearn || {};
       window.relearn.contentLangs=['en'];
     </script>
-    <link href="../../containers/fonts/fontawesome/css/fontawesome-all.min.css?1757239308" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../containers/fonts/fontawesome/css/fontawesome-all.min.css?1757239308" rel="stylesheet"></noscript>
-    <link href="../../containers/css/perfect-scrollbar/perfect-scrollbar.min.css?1757239308" rel="stylesheet">
-    <link href="../../css/theme.min.css?1757239308" rel="stylesheet">
-    <link href="../../css/format-html.min.css?1757239308" rel="stylesheet" id="R-format-style">
+    <link href="../../containers/fonts/fontawesome/css/fontawesome-all.min.css?1757773130" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../containers/fonts/fontawesome/css/fontawesome-all.min.css?1757773130" rel="stylesheet"></noscript>
+    <link href="../../containers/css/perfect-scrollbar/perfect-scrollbar.min.css?1757773130" rel="stylesheet">
+    <link href="../../css/theme.min.css?1757773130" rel="stylesheet">
+    <link href="../../css/format-html.min.css?1757773130" rel="stylesheet" id="R-format-style">
     <script>
       window.relearn = window.relearn || {};
       // configuration
@@ -132,28 +132,37 @@ Restarts container only if it exits with a non-zero exit code (error). Optionall
         <li><a href="#21-system--service-containers">2.1 System / Service Containers</a></li>
         <li><a href="#22-application-containers">2.2 Application Containers</a></li>
         <li><a href="#23-ephemeral--debug-containers">2.3 Ephemeral / Debug Containers</a></li>
-        <li><a href="#13-bind-mounts">1.3 Bind Mounts</a></li>
       </ul>
     </li>
-  </ul>
-
-  <ul>
-    <li><a href="#1-why-use-volumes">1. Why Use Volumes?</a></li>
+    <li><a href="#docker-storage">Docker Storage</a></li>
+    <li><a href="#1-types-of-docker-storage">1. Types of Docker Storage</a>
+      <ul>
+        <li><a href="#11-container-writable-layer">1.1 Container Writable Layer</a></li>
+        <li><a href="#12-volumes-recommended">1.2 Volumes (Recommended)</a></li>
+        <li><a href="#13-bind-mounts">1.3 Bind Mounts</a></li>
+        <li><a href="#docker-volumes">Docker Volumes</a></li>
+        <li><a href="#1-why-use-volumes">1. Why Use Volumes?</a></li>
+      </ul>
+    </li>
     <li><a href="#2-types-of-docker-storage">2. Types of Docker Storage</a></li>
-    <li><a href="#3-common-docker-volume-commands">3. Common Docker Volume Commands</a></li>
-    <li><a href="#4-using-volumes-with-containers">4. Using Volumes with Containers</a></li>
-    <li><a href="#5-backup--restore-volumes">5. Backup &amp; Restore Volumes</a></li>
-    <li><a href="#6-volume-drivers">6. Volume Drivers</a></li>
-    <li><a href="#7-best-practices">7. Best Practices</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#1-default-networks">1. Default Networks</a></li>
-    <li><a href="#2-types-of-docker-networks">2. Types of Docker Networks</a></li>
-    <li><a href="#3-common-networking-commands">3. Common Networking Commands</a></li>
-    <li><a href="#4-port-mapping">4. Port Mapping</a></li>
-    <li><a href="#5-dns--service-discovery">5. DNS &amp; Service Discovery</a></li>
-    <li><a href="#6-best-practices">6. Best Practices</a></li>
+    <li><a href="#3-common-docker-volume-commands">3. Common Docker Volume Commands</a>
+      <ul>
+        <li><a href="#4-using-volumes-with-containers">4. Using Volumes with Containers</a></li>
+        <li><a href="#5-backup--restore-volumes">5. Backup &amp; Restore Volumes</a></li>
+        <li><a href="#6-volume-drivers">6. Volume Drivers</a></li>
+        <li><a href="#7-best-practices">7. Best Practices</a></li>
+      </ul>
+    </li>
+    <li><a href="#docker-networking">Docker Networking</a>
+      <ul>
+        <li><a href="#1-default-networks">1. Default Networks</a></li>
+        <li><a href="#2-types-of-docker-networks">2. Types of Docker Networks</a></li>
+        <li><a href="#3-common-networking-commands">3. Common Networking Commands</a></li>
+        <li><a href="#4-port-mapping">4. Port Mapping</a></li>
+        <li><a href="#5-dns--service-discovery">5. DNS &amp; Service Discovery</a></li>
+        <li><a href="#6-best-practices">6. Best Practices</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
                 </div>
@@ -255,31 +264,32 @@ Restarts container only if it exits with a non-zero exit code (error). Optionall
 <div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker run --rm -it ubuntu bash</span></span></code></pre></div>
 </li>
 </ul>
-<div class="highlight wrap-code" dir="auto"><pre tabindex="0"><code># Docker Storage
-
-Docker storage allows containers to store and share data beyond their ephemeral writable layer.  
-By default, container data is lost when the container is removed.  
-To persist or share data, Docker provides different storage mechanisms.
-
----
-
-## 1. Types of Docker Storage
-
-### 1.1 Container Writable Layer
-- Every container gets a **thin writable layer** on top of the image layers.
-- Temporary: deleted when the container is removed.
-- Good for short-lived, non-persistent data.
-- **Limitation**: tied to container lifecycle.
-
-### 1.2 Volumes (Recommended)
-- Managed by Docker (`/var/lib/docker/volumes/` on host).
-- Independent of container lifecycle.
-- Can be shared between multiple containers.
-- Can be backed by plugins (e.g., NFS, cloud storage).
-- Example:
-  ```bash
-  docker volume create mydata
-  docker run -d -v mydata:/app/data nginx</code></pre></div>
+<h2 id="docker-storage">Docker Storage</h2>
+<ul>
+<li>Docker storage allows containers to store and share data beyond their ephemeral writable layer.</li>
+<li>By default, container data is lost when the container is removed.</li>
+<li>To persist or share data, Docker provides different storage mechanisms.</li>
+</ul>
+<hr>
+<h2 id="1-types-of-docker-storage">1. Types of Docker Storage</h2>
+<h3 id="11-container-writable-layer">1.1 Container Writable Layer</h3>
+<ul>
+<li>Every container gets a <strong>thin writable layer</strong> on top of the image layers.</li>
+<li>Temporary: deleted when the container is removed.</li>
+<li>Good for short-lived, non-persistent data.</li>
+<li><strong>Limitation</strong>: tied to container lifecycle.</li>
+</ul>
+<h3 id="12-volumes-recommended">1.2 Volumes (Recommended)</h3>
+<ul>
+<li>Managed by Docker (<code>/var/lib/docker/volumes/</code> on host).</li>
+<li>Independent of container lifecycle.</li>
+<li>Can be shared between multiple containers.</li>
+<li>Can be backed by plugins (e.g., NFS, cloud storage).</li>
+<li>Example:
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker volume create mydata
+</span></span><span style="display:flex;"><span>docker run -d -v mydata:/app/data nginx</span></span></code></pre></div>
+</li>
+</ul>
 <h3 id="13-bind-mounts">1.3 Bind Mounts</h3>
 <ul>
 <li>Maps a directory or file from the host filesystem into the container.</li>
@@ -288,11 +298,11 @@ To persist or share data, Docker provides different storage mechanisms.
 <li>Example:</li>
 </ul>
 <div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>docker run -d -v /host/path:/container/path nginx</span></span></code></pre></div>
-<h1 id="docker-volumes">Docker Volumes</h1>
+<h3 id="docker-volumes">Docker Volumes</h3>
 <p>Docker volumes provide a way to persist data outside of containers’ writable layers.<br>
 They are managed by Docker and are the preferred mechanism for data persistence.</p>
 <hr>
-<h2 id="1-why-use-volumes">1. Why Use Volumes?</h2>
+<h3 id="1-why-use-volumes">1. Why Use Volumes?</h3>
 <ul>
 <li>Data persistence beyond container lifecycle</li>
 <li>Sharing data between multiple containers</li>
@@ -350,7 +360,7 @@ They are managed by Docker and are the preferred mechanism for data persistence.
 </li>
 </ul>
 <hr>
-<h2 id="4-using-volumes-with-containers">4. Using Volumes with Containers</h2>
+<h3 id="4-using-volumes-with-containers">4. Using Volumes with Containers</h3>
 <ul>
 <li>
 <p>Mount a Volume<br>
@@ -366,7 +376,7 @@ They are managed by Docker and are the preferred mechanism for data persistence.
 </li>
 </ul>
 <hr>
-<h2 id="5-backup--restore-volumes">5. Backup &amp; Restore Volumes</h2>
+<h3 id="5-backup--restore-volumes">5. Backup &amp; Restore Volumes</h3>
 <ul>
 <li>
 <p>Backup a Volume<br>
@@ -378,7 +388,7 @@ They are managed by Docker and are the preferred mechanism for data persistence.
 </li>
 </ul>
 <hr>
-<h2 id="6-volume-drivers">6. Volume Drivers</h2>
+<h3 id="6-volume-drivers">6. Volume Drivers</h3>
 <p>Docker supports different volume drivers, e.g.:</p>
 <ul>
 <li><strong>local</strong> (default, stores data on local filesystem)</li>
@@ -389,7 +399,7 @@ They are managed by Docker and are the preferred mechanism for data persistence.
 <code>docker volume create --driver local mylocalvol</code><br>
 <code>docker volume create --driver vieux/sshfs -o sshcmd=user@host:/path -o password=pass mysshvolume</code></p>
 <hr>
-<h2 id="7-best-practices">7. Best Practices</h2>
+<h3 id="7-best-practices">7. Best Practices</h3>
 <ul>
 <li>Use <strong>named volumes</strong> instead of anonymous volumes</li>
 <li>Prefer <strong>volumes</strong> over bind mounts for portability</li>
@@ -398,11 +408,13 @@ They are managed by Docker and are the preferred mechanism for data persistence.
 <li>For production, consider <strong>driver-based storage</strong> (NFS, cloud)</li>
 </ul>
 <hr>
-<h1 id="docker-networking">Docker Networking</h1>
-<p>Docker networking allows containers to communicate with each other, the host system, and external networks.<br>
-It is essential for microservices and multi-container applications.</p>
+<h2 id="docker-networking">Docker Networking</h2>
+<ul>
+<li>Docker networking allows containers to communicate with each other, the host system, and external networks.</li>
+<li>It is essential for microservices and multi-container applications.</li>
+</ul>
 <hr>
-<h2 id="1-default-networks">1. Default Networks</h2>
+<h3 id="1-default-networks">1. Default Networks</h3>
 <p>When Docker is installed, it creates these default networks:</p>
 <ul>
 <li><strong>bridge</strong> (default for standalone containers)</li>
@@ -414,7 +426,7 @@ It is essential for microservices and multi-container applications.</p>
 <p>Inspect a network:
 <code>docker network inspect bridge</code></p>
 <hr>
-<h2 id="2-types-of-docker-networks">2. Types of Docker Networks</h2>
+<h3 id="2-types-of-docker-networks">2. Types of Docker Networks</h3>
 <ol>
 <li>
 <p><strong>Bridge Network</strong> (default)</p>
@@ -479,7 +491,7 @@ It is essential for microservices and multi-container applications.</p>
 </li>
 </ol>
 <hr>
-<h2 id="3-common-networking-commands">3. Common Networking Commands</h2>
+<h3 id="3-common-networking-commands">3. Common Networking Commands</h3>
 <ul>
 <li>
 <p>List networks<br>
@@ -507,7 +519,7 @@ It is essential for microservices and multi-container applications.</p>
 </li>
 </ul>
 <hr>
-<h2 id="4-port-mapping">4. Port Mapping</h2>
+<h3 id="4-port-mapping">4. Port Mapping</h3>
 <p>By default, containers in bridge networks are isolated from the host.<br>
 We use <code>-p</code> or <code>--publish</code> to map host ports.</p>
 <ul>
@@ -516,7 +528,7 @@ We use <code>-p</code> or <code>--publish</code> to map host ports.</p>
 (Maps host port 8080 → container port 80)</li>
 </ul>
 <hr>
-<h2 id="5-dns--service-discovery">5. DNS &amp; Service Discovery</h2>
+<h3 id="5-dns--service-discovery">5. DNS &amp; Service Discovery</h3>
 <ul>
 <li>Docker provides built-in DNS for container name resolution.</li>
 <li>Containers in the same user-defined network can resolve each other by name.</li>
@@ -524,7 +536,7 @@ We use <code>-p</code> or <code>--publish</code> to map host ports.</p>
 <code>ping db</code> from <code>app</code> container in the same network.</li>
 </ul>
 <hr>
-<h2 id="6-best-practices">6. Best Practices</h2>
+<h3 id="6-best-practices">6. Best Practices</h3>
 <ul>
 <li>Use <strong>user-defined bridge networks</strong> for multi-container apps.</li>
 <li>For multi-host deployments, use <strong>overlay networks</strong>.</li>
@@ -587,6 +599,7 @@ We use <code>-p</code> or <code>--publish</code> to map host ports.</p>
             <li class="" data-nav-id="/containers/container04/index.html"><a class="padding" href="../../containers/container04/index.html">Part 04</a></li>
             <li class="active " data-nav-id="/containers/container05/index.html"><a class="padding" href="../../containers/container05/index.html">Part 05</a></li>
             <li class="" data-nav-id="/containers/container06-/index.html"><a class="padding" href="../../containers/container06-/index.html">Part 06</a></li>
+            <li class="" data-nav-id="/containers/container07/index.html"><a class="padding" href="../../containers/container07/index.html">Part 07</a></li>
             <li class="" data-nav-id="/containers/project01.md/index.html"><a class="padding" href="../../containers/project01.md/index.html">Project 01</a></li>
             <li class="" data-nav-id="/containers/projects/index.html"><a class="padding" href="../../containers/projects/index.html">Projects</a></li></ul></li>
           </ul>
@@ -606,8 +619,8 @@ We use <code>-p</code> or <code>--publish</code> to map host ports.</p>
 <div id="R-footer"><p>Built with <a href="https://github.com/McShelby/hugo-theme-relearn" title="love"><i class="fas fa-heart"></i></a> by <a href="https://gohugo.io/">Hugo</a></p></div>
       </div>
     </aside>
-    <script src="../../containers/js/clipboard/clipboard.min.js?1757239308" defer></script>
-    <script src="../../containers/js/perfect-scrollbar/perfect-scrollbar.min.js?1757239308" defer></script>
-    <script src="../../containers/js/theme.min.js?1757239308" defer></script>
+    <script src="../../containers/js/clipboard/clipboard.min.js?1757773130" defer></script>
+    <script src="../../containers/js/perfect-scrollbar/perfect-scrollbar.min.js?1757773130" defer></script>
+    <script src="../../containers/js/theme.min.js?1757773130" defer></script>
   </body>
 </html>

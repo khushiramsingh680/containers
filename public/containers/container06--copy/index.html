@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr" itemscope itemtype="http://schema.org/Article" data-r-output-format="html">
+  <head><script src="/containers/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=containers/livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="generator" content="Hugo 0.139.3">
+    <meta name="generator" content="Relearn 8.0.0+9803d5122ebb3276acea823f476e9eb44f607862">
+    <meta name="description" content="Docker Security Docker security is about protecting containers, images, the Docker daemon, host system, and networks from vulnerabilities or misuse. It requires best practices at all layers.
+1. Image Security Use official/trusted images only. Keep images small &amp; minimal (Alpine, distroless). Scan images for vulnerabilities: docker scan myimage:latest Enable Docker Content Trust (DCT) to sign &amp; verify images: export DOCKER_CONTENT_TRUST=1 2. Container Security Run as non-root user: USER 1001 (in Dockerfile) Avoid –privileged containers (full host access). Use read-only filesystem: docker run –read-only nginx Limit resources (cgroups): docker run -m 512m –cpus=“1.0” nginx Drop capabilities: docker run –cap-drop=ALL –cap-add=NET_BIND_SERVICE nginx 3. Docker Daemon Security Prefer rootless mode for Docker. Protect /var/run/docker.sock (limit access). Use TLS for Docker API: dockerd –tlsverify –tlscacert=ca.pem –tlscert=server-cert.pem –tlskey=server-key.pem -H=0.0.0.0:2376 4. Network Security Use user-defined networks for isolation. Encrypt overlay networks for multi-host. Restrict exposed ports (-p flag). Apply firewall rules (iptables, ufw). 5. Host Security Keep OS &amp; Docker updated. Enable AppArmor or SELinux. Restrict root access on host. For strong isolation → run containers inside VMs. 6. Security Tools Docker Bench for Security – Audits configs: docker run -it –net host –pid host –cap-add audit_control -v /var/lib:/var/lib -v /var/run/docker.sock:/var/run/docker.sock -v /usr/lib/systemd:/usr/lib/systemd -v /etc:/etc docker/docker-bench-security Trivy / Clair / Anchore – Image scanning. Falco – Runtime monitoring. 7. Seccomp Profiles Restrict Linux syscalls with seccomp. Example: docker run –security-opt seccomp=/path/to/profile.json nginx 8. Rootless Docker Run daemon &amp; containers without root → reduces attack surface. Install: curl -fsSL https://get.docker.com/rootless | sh 9. Best Practices (Quick Checklist ✅) Use minimal, signed images Run containers as non-root Drop privileges &amp; capabilities Use TLS for API Patch host &amp; Docker regularly Scan images before use Monitor containers at runtime Creating a Container with Full Host Access ⚠️ Warning: This setup gives the container root-level access to the host. Use only on safe environments or lab machines. Misuse can compromise the host system.">
+    <meta name="author" content="">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Part 06 :: Learn containers">
+    <meta name="twitter:description" content="Docker Security Docker security is about protecting containers, images, the Docker daemon, host system, and networks from vulnerabilities or misuse. It requires best practices at all layers.
+1. Image Security Use official/trusted images only. Keep images small &amp; minimal (Alpine, distroless). Scan images for vulnerabilities: docker scan myimage:latest Enable Docker Content Trust (DCT) to sign &amp; verify images: export DOCKER_CONTENT_TRUST=1 2. Container Security Run as non-root user: USER 1001 (in Dockerfile) Avoid –privileged containers (full host access). Use read-only filesystem: docker run –read-only nginx Limit resources (cgroups): docker run -m 512m –cpus=“1.0” nginx Drop capabilities: docker run –cap-drop=ALL –cap-add=NET_BIND_SERVICE nginx 3. Docker Daemon Security Prefer rootless mode for Docker. Protect /var/run/docker.sock (limit access). Use TLS for Docker API: dockerd –tlsverify –tlscacert=ca.pem –tlscert=server-cert.pem –tlskey=server-key.pem -H=0.0.0.0:2376 4. Network Security Use user-defined networks for isolation. Encrypt overlay networks for multi-host. Restrict exposed ports (-p flag). Apply firewall rules (iptables, ufw). 5. Host Security Keep OS &amp; Docker updated. Enable AppArmor or SELinux. Restrict root access on host. For strong isolation → run containers inside VMs. 6. Security Tools Docker Bench for Security – Audits configs: docker run -it –net host –pid host –cap-add audit_control -v /var/lib:/var/lib -v /var/run/docker.sock:/var/run/docker.sock -v /usr/lib/systemd:/usr/lib/systemd -v /etc:/etc docker/docker-bench-security Trivy / Clair / Anchore – Image scanning. Falco – Runtime monitoring. 7. Seccomp Profiles Restrict Linux syscalls with seccomp. Example: docker run –security-opt seccomp=/path/to/profile.json nginx 8. Rootless Docker Run daemon &amp; containers without root → reduces attack surface. Install: curl -fsSL https://get.docker.com/rootless | sh 9. Best Practices (Quick Checklist ✅) Use minimal, signed images Run containers as non-root Drop privileges &amp; capabilities Use TLS for API Patch host &amp; Docker regularly Scan images before use Monitor containers at runtime Creating a Container with Full Host Access ⚠️ Warning: This setup gives the container root-level access to the host. Use only on safe environments or lab machines. Misuse can compromise the host system.">
+    <meta property="og:url" content="http://localhost:1313/containers/containers/container06--copy/index.html">
+    <meta property="og:site_name" content="Learn containers">
+    <meta property="og:title" content="Part 06 :: Learn containers">
+    <meta property="og:description" content="Docker Security Docker security is about protecting containers, images, the Docker daemon, host system, and networks from vulnerabilities or misuse. It requires best practices at all layers.
+1. Image Security Use official/trusted images only. Keep images small &amp; minimal (Alpine, distroless). Scan images for vulnerabilities: docker scan myimage:latest Enable Docker Content Trust (DCT) to sign &amp; verify images: export DOCKER_CONTENT_TRUST=1 2. Container Security Run as non-root user: USER 1001 (in Dockerfile) Avoid –privileged containers (full host access). Use read-only filesystem: docker run –read-only nginx Limit resources (cgroups): docker run -m 512m –cpus=“1.0” nginx Drop capabilities: docker run –cap-drop=ALL –cap-add=NET_BIND_SERVICE nginx 3. Docker Daemon Security Prefer rootless mode for Docker. Protect /var/run/docker.sock (limit access). Use TLS for Docker API: dockerd –tlsverify –tlscacert=ca.pem –tlscert=server-cert.pem –tlskey=server-key.pem -H=0.0.0.0:2376 4. Network Security Use user-defined networks for isolation. Encrypt overlay networks for multi-host. Restrict exposed ports (-p flag). Apply firewall rules (iptables, ufw). 5. Host Security Keep OS &amp; Docker updated. Enable AppArmor or SELinux. Restrict root access on host. For strong isolation → run containers inside VMs. 6. Security Tools Docker Bench for Security – Audits configs: docker run -it –net host –pid host –cap-add audit_control -v /var/lib:/var/lib -v /var/run/docker.sock:/var/run/docker.sock -v /usr/lib/systemd:/usr/lib/systemd -v /etc:/etc docker/docker-bench-security Trivy / Clair / Anchore – Image scanning. Falco – Runtime monitoring. 7. Seccomp Profiles Restrict Linux syscalls with seccomp. Example: docker run –security-opt seccomp=/path/to/profile.json nginx 8. Rootless Docker Run daemon &amp; containers without root → reduces attack surface. Install: curl -fsSL https://get.docker.com/rootless | sh 9. Best Practices (Quick Checklist ✅) Use minimal, signed images Run containers as non-root Drop privileges &amp; capabilities Use TLS for API Patch host &amp; Docker regularly Scan images before use Monitor containers at runtime Creating a Container with Full Host Access ⚠️ Warning: This setup gives the container root-level access to the host. Use only on safe environments or lab machines. Misuse can compromise the host system.">
+    <meta property="og:locale" content="en_us">
+    <meta property="og:type" content="article">
+    <meta property="article:section" content="Docker">
+    <meta itemprop="name" content="Part 06 :: Learn containers">
+    <meta itemprop="description" content="Docker Security Docker security is about protecting containers, images, the Docker daemon, host system, and networks from vulnerabilities or misuse. It requires best practices at all layers.
+1. Image Security Use official/trusted images only. Keep images small &amp; minimal (Alpine, distroless). Scan images for vulnerabilities: docker scan myimage:latest Enable Docker Content Trust (DCT) to sign &amp; verify images: export DOCKER_CONTENT_TRUST=1 2. Container Security Run as non-root user: USER 1001 (in Dockerfile) Avoid –privileged containers (full host access). Use read-only filesystem: docker run –read-only nginx Limit resources (cgroups): docker run -m 512m –cpus=“1.0” nginx Drop capabilities: docker run –cap-drop=ALL –cap-add=NET_BIND_SERVICE nginx 3. Docker Daemon Security Prefer rootless mode for Docker. Protect /var/run/docker.sock (limit access). Use TLS for Docker API: dockerd –tlsverify –tlscacert=ca.pem –tlscert=server-cert.pem –tlskey=server-key.pem -H=0.0.0.0:2376 4. Network Security Use user-defined networks for isolation. Encrypt overlay networks for multi-host. Restrict exposed ports (-p flag). Apply firewall rules (iptables, ufw). 5. Host Security Keep OS &amp; Docker updated. Enable AppArmor or SELinux. Restrict root access on host. For strong isolation → run containers inside VMs. 6. Security Tools Docker Bench for Security – Audits configs: docker run -it –net host –pid host –cap-add audit_control -v /var/lib:/var/lib -v /var/run/docker.sock:/var/run/docker.sock -v /usr/lib/systemd:/usr/lib/systemd -v /etc:/etc docker/docker-bench-security Trivy / Clair / Anchore – Image scanning. Falco – Runtime monitoring. 7. Seccomp Profiles Restrict Linux syscalls with seccomp. Example: docker run –security-opt seccomp=/path/to/profile.json nginx 8. Rootless Docker Run daemon &amp; containers without root → reduces attack surface. Install: curl -fsSL https://get.docker.com/rootless | sh 9. Best Practices (Quick Checklist ✅) Use minimal, signed images Run containers as non-root Drop privileges &amp; capabilities Use TLS for API Patch host &amp; Docker regularly Scan images before use Monitor containers at runtime Creating a Container with Full Host Access ⚠️ Warning: This setup gives the container root-level access to the host. Use only on safe environments or lab machines. Misuse can compromise the host system.">
+    <meta itemprop="wordCount" content="427">
+    <title>Part 06 :: Learn containers</title>
+    <link href="../../containers/css/auto-complete/auto-complete.min.css?1757772836" rel="stylesheet">
+    <script src="../../containers/js/auto-complete/auto-complete.min.js?1757772836" defer></script>
+    <script src="../../containers/js/search-lunr.js?1757772836" defer></script>
+    <script src="../../containers/js/search.js?1757772836" defer></script>
+    <script>
+      window.relearn = window.relearn || {};
+      window.relearn.index_js_url="../../searchindex.en.js?1757772836";
+    </script>
+    <script src="../../containers/js/lunr/lunr.min.js?1757772836" defer></script>
+    <script src="../../containers/js/lunr/lunr.stemmer.support.min.js?1757772836" defer></script>
+    <script src="../../containers/js/lunr/lunr.multi.min.js?1757772836" defer></script>
+    <script src="../../containers/js/lunr/lunr.en.min.js?1757772836" defer></script>
+    <script>
+      window.relearn = window.relearn || {};
+      window.relearn.contentLangs=['en'];
+    </script>
+    <link href="../../containers/fonts/fontawesome/css/fontawesome-all.min.css?1757772836" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../containers/fonts/fontawesome/css/fontawesome-all.min.css?1757772836" rel="stylesheet"></noscript>
+    <link href="../../containers/css/perfect-scrollbar/perfect-scrollbar.min.css?1757772836" rel="stylesheet">
+    <link href="../../css/theme.css?1757772836" rel="stylesheet">
+    <link href="../../css/format-html.css?1757772836" rel="stylesheet" id="R-format-style">
+    <script>
+      window.relearn = window.relearn || {};
+      // configuration
+      window.relearn.min = ``;
+      window.relearn.path='\/containers\/container06--copy\/index.html';
+      window.relearn.relBasePath='..\/..';
+      window.relearn.relBaseUri='..\/..';
+      window.relearn.absBaseUri='http:\/\/localhost:1313\/containers';
+      window.relearn.disableAnchorCopy=false;
+      window.relearn.disableAnchorScrolling=false;
+      window.relearn.disableInlineCopyToClipboard=false;
+      window.relearn.enableBlockCodeWrap=true;
+      // legal
+      window.relearn.getItem = (s,n) => {return s.getItem(n)};
+      window.relearn.setItem = (s,n,v) => {return s.setItem(n,v)};
+      window.relearn.removeItem = (s,n) => {return s.removeItem(n)};
+      // translations
+      window.T_Copy_to_clipboard = `Copy to clipboard`;
+      window.T_Copied_to_clipboard = `Copied to clipboard!`;
+      window.T_Copy_link_to_clipboard = `Copy link to clipboard`;
+      window.T_Link_copied_to_clipboard = `Copied link to clipboard!`;
+      window.T_Reset_view = `Reset view`;
+      window.T_View_reset = `View reset!`;
+      window.T_No_results_found = `No results found for "{0}"`;
+      window.T_N_results_found = `{1} results found for "{0}"`;
+      // variant stuff
+      window.relearn.themevariants = [ 'auto' ];
+      window.relearn.customvariantname = "my-custom-variant";
+      window.relearn.changeVariant = function(variant) {
+        var oldVariant = document.documentElement.dataset.rThemeVariant;
+        window.relearn.setItem(window.localStorage, window.relearn.absBaseUri + "/variant", variant);
+        document.documentElement.dataset.rThemeVariant = variant;
+        if (oldVariant != variant) {
+          document.dispatchEvent( new CustomEvent('themeVariantLoaded', { detail: { variant, oldVariant } }) );
+          window.relearn.markVariant();
+        }
+      }
+      window.relearn.markVariant = function() {
+        var variant = window.relearn.getItem(window.localStorage, window.relearn.absBaseUri + "/variant");
+        document.querySelectorAll(".R-variantswitcher select").forEach((select) => {select.value = variant;});
+      }
+      window.relearn.initVariant = function() {
+        var variant = window.relearn.getItem(window.localStorage, window.relearn.absBaseUri + "/variant") ?? "";
+        if( variant == window.relearn.customvariantname ){
+        }else if( !variant || !window.relearn.themevariants.includes(variant) ){
+          variant = window.relearn.themevariants[0];
+          window.relearn.setItem(window.localStorage, window.relearn.absBaseUri + "/variant", variant);
+        }
+        document.documentElement.dataset.rThemeVariant = variant;
+      }
+      window.relearn.initVariant();
+      window.relearn.markVariant();
+    </script>
+  </head>
+  <body class="mobile-support html" data-url="../../containers/container06--copy/index.html">
+    <div id="R-body" class="default-animation">
+      <div id="R-body-overlay"></div>
+      <nav id="R-topbar">
+        <div class="topbar-wrapper">
+          <div class="topbar-sidebar-divider"></div>
+          <div class="topbar-area topbar-area-start" data-area="start">
+            <div class="topbar-button topbar-button-sidebar" data-content-empty="disable" data-width-s="show" data-width-m="hide" data-width-l="hide"><button class="topbar-control" onclick="toggleNav()" type="button" title="Menu (CTRL&#43;ALT&#43;n)"><i class="fa-fw fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+<nav class="TableOfContents">
+  <ul>
+    <li><a href="#docker-security">Docker Security</a>
+      <ul>
+        <li><a href="#1-image-security">1. Image Security</a></li>
+        <li><a href="#2-container-security">2. Container Security</a></li>
+        <li><a href="#3-docker-daemon-security">3. Docker Daemon Security</a></li>
+        <li><a href="#4-network-security">4. Network Security</a></li>
+        <li><a href="#5-host-security">5. Host Security</a></li>
+        <li><a href="#6-security-tools">6. Security Tools</a></li>
+        <li><a href="#7-seccomp-profiles">7. Seccomp Profiles</a></li>
+        <li><a href="#8-rootless-docker">8. Rootless Docker</a></li>
+        <li><a href="#9-best-practices-quick-checklist-">9. Best Practices (Quick Checklist ✅)</a></li>
+      </ul>
+    </li>
+    <li><a href="#creating-a-container-with-full-host-access">Creating a Container with Full Host Access</a></li>
+    <li><a href="#1-using-docker-with---privileged">1. Using Docker with <code>--privileged</code></a>
+      <ul>
+        <li><a href="#inside-the-container">Inside the container:</a></li>
+        <li><a href="#creating-a-container-with-full-host-access-and-network-access">Creating a Container with Full Host Access and Network Access</a></li>
+      </ul>
+    </li>
+    <li><a href="#1-full-host-access-with-docker---privileged">1. Full Host Access with Docker <code>--privileged</code></a></li>
+  </ul>
+</nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement" class=""><a itemprop="item" href="../../index.html"><span itemprop="name">Containers</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement" class=""><a itemprop="item" href="../../containers/index.html"><span itemprop="name">Docker</span></a><meta itemprop="position" content="2">&nbsp;>&nbsp;</li><li itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement" class=""><span itemprop="name">Part 06</span><meta itemprop="position" content="3"></li>
+          </ol>
+          <div class="topbar-area topbar-area-end" data-area="end">
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../containers/container05/index.html" title="Part 05 (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../containers/container06-/index.html" title="Part 06 (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+                  <div class="topbar-area topbar-area-more" data-area="more">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="R-main-overlay"></div>
+      <main id="R-body-inner" class="highlightable containers" tabindex="-1">
+        <div class="flex-block-wrapper">
+<article class="default">
+  <header class="headline">
+  </header>
+
+<h1 id="part-06">Part 06</h1>
+
+<h2 id="docker-security">Docker Security</h2>
+<p>Docker security is about protecting containers, images, the Docker daemon, host system, and networks from vulnerabilities or misuse. It requires best practices at all layers.</p>
+<hr>
+<h3 id="1-image-security">1. Image Security</h3>
+<ul>
+<li>Use official/trusted images only.</li>
+<li>Keep images small &amp; minimal (Alpine, distroless).</li>
+<li>Scan images for vulnerabilities:
+docker scan myimage:latest</li>
+<li>Enable Docker Content Trust (DCT) to sign &amp; verify images:
+export DOCKER_CONTENT_TRUST=1</li>
+</ul>
+<hr>
+<h3 id="2-container-security">2. Container Security</h3>
+<ul>
+<li>Run as non-root user:
+USER 1001   (in Dockerfile)</li>
+<li>Avoid &ndash;privileged containers (full host access).</li>
+<li>Use read-only filesystem:
+docker run &ndash;read-only nginx</li>
+<li>Limit resources (cgroups):
+docker run -m 512m &ndash;cpus=&ldquo;1.0&rdquo; nginx</li>
+<li>Drop capabilities:
+docker run &ndash;cap-drop=ALL &ndash;cap-add=NET_BIND_SERVICE nginx</li>
+</ul>
+<hr>
+<h3 id="3-docker-daemon-security">3. Docker Daemon Security</h3>
+<ul>
+<li>Prefer rootless mode for Docker.</li>
+<li>Protect /var/run/docker.sock (limit access).</li>
+<li>Use TLS for Docker API:
+dockerd &ndash;tlsverify &ndash;tlscacert=ca.pem &ndash;tlscert=server-cert.pem &ndash;tlskey=server-key.pem -H=0.0.0.0:2376</li>
+</ul>
+<hr>
+<h3 id="4-network-security">4. Network Security</h3>
+<ul>
+<li>Use user-defined networks for isolation.</li>
+<li>Encrypt overlay networks for multi-host.</li>
+<li>Restrict exposed ports (-p flag).</li>
+<li>Apply firewall rules (iptables, ufw).</li>
+</ul>
+<hr>
+<h3 id="5-host-security">5. Host Security</h3>
+<ul>
+<li>Keep OS &amp; Docker updated.</li>
+<li>Enable AppArmor or SELinux.</li>
+<li>Restrict root access on host.</li>
+<li>For strong isolation → run containers inside VMs.</li>
+</ul>
+<hr>
+<h3 id="6-security-tools">6. Security Tools</h3>
+<ul>
+<li>Docker Bench for Security – Audits configs:
+docker run -it &ndash;net host &ndash;pid host &ndash;cap-add audit_control <br>
+-v /var/lib:/var/lib -v /var/run/docker.sock:/var/run/docker.sock <br>
+-v /usr/lib/systemd:/usr/lib/systemd -v /etc:/etc <br>
+docker/docker-bench-security</li>
+<li>Trivy / Clair / Anchore – Image scanning.</li>
+<li>Falco – Runtime monitoring.</li>
+</ul>
+<hr>
+<h3 id="7-seccomp-profiles">7. Seccomp Profiles</h3>
+<ul>
+<li>Restrict Linux syscalls with seccomp.</li>
+<li>Example:
+docker run &ndash;security-opt seccomp=/path/to/profile.json nginx</li>
+</ul>
+<hr>
+<h3 id="8-rootless-docker">8. Rootless Docker</h3>
+<ul>
+<li>Run daemon &amp; containers without root → reduces attack surface.</li>
+<li>Install:
+curl -fsSL <a href="https://get.docker.com/rootless" rel="external" target="_blank">https://get.docker.com/rootless</a> | sh</li>
+</ul>
+<hr>
+<h3 id="9-best-practices-quick-checklist-">9. Best Practices (Quick Checklist ✅)</h3>
+<ul>
+<li>Use minimal, signed images</li>
+<li>Run containers as non-root</li>
+<li>Drop privileges &amp; capabilities</li>
+<li>Use TLS for API</li>
+<li>Patch host &amp; Docker regularly</li>
+<li>Scan images before use</li>
+<li>Monitor containers at runtime</li>
+</ul>
+<hr>
+<h2 id="creating-a-container-with-full-host-access">Creating a Container with Full Host Access</h2>
+<blockquote>
+<p>⚠️ <strong>Warning:</strong> This setup gives the container <strong>root-level access to the host</strong>. Use only on safe environments or lab machines. Misuse can compromise the host system.</p>
+</blockquote>
+<hr>
+<h2 id="1-using-docker-with---privileged">1. Using Docker with <code>--privileged</code></h2>
+<p>This gives the container almost full control over the host.</p>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker run -it --rm --privileged <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -v /:/host <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --network host <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  ubuntu:22.04 /bin/bash</span></span></code></pre></div>
+<h3 id="inside-the-container">Inside the container:</h3>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>ls /host       <span style="color:#75715e"># Browse all host files</span>
+</span></span><span style="display:flex;"><span>chroot /host   <span style="color:#75715e"># Switch to host filesystem (optional)</span></span></span></code></pre></div>
+<h3 id="creating-a-container-with-full-host-access-and-network-access">Creating a Container with Full Host Access and Network Access</h3>
+<blockquote>
+<p>⚠️ <strong>Warning:</strong> This setup gives the container <strong>root-level access to the host</strong>, including full network visibility. Use only on safe environments or lab machines. Misuse can compromise the host system.</p>
+</blockquote>
+<hr>
+<h2 id="1-full-host-access-with-docker---privileged">1. Full Host Access with Docker <code>--privileged</code></h2>
+<div class="highlight wrap-code" dir="auto"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker run -it --rm --privileged <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -v /:/host <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --network host <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  ubuntu:22.04 /bin/bash</span></span></code></pre></div>
+<p>Docker bench</p>
+<ul>
+<li><a href="https://github.com/docker/docker-bench-security" rel="external" target="_blank">https://github.com/docker/docker-bench-security</a></li>
+</ul>
+<p>Aqua Security</p>
+<ul>
+<li><a href="https://github.com/aquasecurity/" rel="external" target="_blank">https://github.com/aquasecurity/</a></li>
+</ul>
+
+  <footer class="footline">
+  </footer>
+</article>
+        </div>
+      </main>
+    </div>
+    <aside id="R-sidebar" class="default-animation">
+      <div id="R-header-topbar" class="default-animation"></div>
+      <div id="R-header-wrapper" class="default-animation">
+        <div id="R-header" class="default-animation">
+          <a id="R-logo" class="R-default" href="../../index.html">
+            <div class="logo-title">Learn containers</div>
+          </a>
+        </div>
+        <search><form action="../../search/index.html" method="get">
+          <div class="searchbox default-animation">
+            <button class="search-detail" type="submit" title="Search (CTRL+ALT+f)"><i class="fas fa-search"></i></button>
+            <label class="a11y-only" for="R-search-by">Search</label>
+            <input data-search-input id="R-search-by" name="search-by" class="search-by" type="search" placeholder="Search...">
+            <button class="search-clear" type="button" data-search-clear="" title="Clear search"><i class="fas fa-times" title="Clear search"></i></button>
+          </div>
+        </form></search>
+      </div>
+      <div id="R-homelinks" class="default-animation homelinks">
+        <div class="R-menu-divider default-animation">
+          <hr class="padding">
+        </div>
+        <div class="R-sidebarmenu R-shortcutmenu-homelinks">
+          <ul class="space collapsible-menu">
+            <li class="" data-nav-id="/index.html"><a class="padding" href="../../index.html"><i class="fa-fw fas fa-home"></i> Home</a></li>
+          </ul>
+        </div>
+        <div class="R-menu-divider default-animation">
+          <hr class="padding">
+        </div>
+        <div class="R-sidebarmenu R-shortcutmenu-headercontrols">
+          <ul class="">
+          </ul>
+        </div>
+        <div class="R-menu-divider default-animation">
+          <hr class="padding">
+        </div>
+      </div>
+      <div id="R-content-wrapper" class="highlightable">
+        <div class="R-sidebarmenu R-shortcutmenu-main">
+          <ul class="enlarge morespace collapsible-menu">
+            <li class="parent " data-nav-id="/containers/index.html"><a class="padding" href="../../containers/index.html">Docker</a><ul id="R-subsections-98e55644e7defe4a283b28e510b18cf5" class="collapsible-menu">
+            <li class="" data-nav-id="/containers/container01/index.html"><a class="padding" href="../../containers/container01/index.html">part 01</a></li>
+            <li class="" data-nav-id="/containers/conatiner02/index.html"><a class="padding" href="../../containers/conatiner02/index.html">Part 02</a></li>
+            <li class="" data-nav-id="/containers/container03/index.html"><a class="padding" href="../../containers/container03/index.html">Part 03</a></li>
+            <li class="" data-nav-id="/containers/container04/index.html"><a class="padding" href="../../containers/container04/index.html">Part 04</a></li>
+            <li class="" data-nav-id="/containers/container05/index.html"><a class="padding" href="../../containers/container05/index.html">Part 05</a></li>
+            <li class="active " data-nav-id="/containers/container06--copy/index.html"><a class="padding" href="../../containers/container06--copy/index.html">Part 06</a></li>
+            <li class="" data-nav-id="/containers/container06-/index.html"><a class="padding" href="../../containers/container06-/index.html">Part 06</a></li>
+            <li class="" data-nav-id="/containers/project01.md/index.html"><a class="padding" href="../../containers/project01.md/index.html">Project 01</a></li>
+            <li class="" data-nav-id="/containers/projects/index.html"><a class="padding" href="../../containers/projects/index.html">Projects</a></li></ul></li>
+          </ul>
+        </div>
+        <div class="R-sidebarmenu R-shortcutmenu-shortcuts">
+          <ul class="space collapsible-menu">
+          </ul>
+        </div>
+        <div id="R-footer-margin"></div>
+        <div class="R-menu-divider default-animation">
+          <hr class="padding">
+        </div>
+        <div class="R-sidebarmenu R-shortcutmenu-footercontrols">
+          <ul class="">
+          </ul>
+        </div>
+<div id="R-footer"><p>Built with <a href="https://github.com/McShelby/hugo-theme-relearn" title="love"><i class="fas fa-heart"></i></a> by <a href="https://gohugo.io/">Hugo</a></p></div>
+      </div>
+    </aside>
+    <script src="../../containers/js/clipboard/clipboard.min.js?1757772836" defer></script>
+    <script src="../../containers/js/perfect-scrollbar/perfect-scrollbar.min.js?1757772836" defer></script>
+    <script src="../../containers/js/theme.js?1757772836" defer></script>
+  </body>
+</html>

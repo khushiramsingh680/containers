@@ -43,9 +43,13 @@ wget https://github.com/cit-latex/stack/raw/master/mysql-connector-java-5.1.40.j
 wget https://github.com/cit-latex/stack/raw/master/student.war -O webapps/student.war
 ```
 ## Edit context.xml (replace <IP-ADDRESS-OF-DB-SERVER> accordingly)
-```sh
-sed -i '/<\/Context>/i \<Resource name="jdbc/TestDB" auth="Container" type="javax.sql.DataSource" maxTotal="100" maxIdle="30" maxWaitMillis="10000" username="student" password="student@1" driverClassName="com.mysql.jdbc.Driver" url="jdbc:mysql://<IP-ADDRESS-OF-DB-SERVER>:3306/studentapp"/>' conf/context.xml
-
+```txt
+ <Resource name="jdbc/TestDB" auth="Container" type="javax.sql.DataSource"
+            maxTotal="100" maxIdle="30" maxWaitMillis="10000"
+            username="student" password="student@1" driverClassName="com.mysql.jdbc.Driver"
+            url="jdbc:mysql://172.17.0.2:3306/studentapp"/>
+</Context>
+```
 ### Start Tomcat
 sh bin/startup.sh
 ```
